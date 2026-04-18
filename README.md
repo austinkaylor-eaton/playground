@@ -9,3 +9,4 @@ A place for trying out new ideas
 ### Microsoft Learn
 - [Customize your build](https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=visualstudio)
 - [Customize the build by folder](https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory?view=visualstudio)
+- [Centralized NuGet Package Management](https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management)
