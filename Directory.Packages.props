@@ -4,5 +4,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Define the versions of the packages used in the solution. -->
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.23.0.*" />
   </ItemGroup>
 </Project>
