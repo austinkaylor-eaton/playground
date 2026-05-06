@@ -33,6 +33,8 @@ insert_final_newline = false
 
 #### .NET Coding Conventions ####
 [*.{cs,vb}]
+# Rule Overrides
+dotnet_diagnostic.CA1515.severity = none
 
 # Organize usings
 dotnet_separate_import_directive_groups = true
