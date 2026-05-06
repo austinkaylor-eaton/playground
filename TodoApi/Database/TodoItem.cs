@@ -1,4 +1,4 @@
-﻿namespace TodoApi.Models;
+﻿namespace TodoApi.Database;
 
 /// <summary>
 /// Entity representing a TodoItem in the database
