@@ -1,10 +1,12 @@
 @BaseAddress = http://localhost:5012
 
-GET {{BaseAddress}}/weatherforecast/
-Accept: application/json
+### Get all todo items
+GET {{BaseAddress}}/api/todoitems
 
-###
+### Get a specific todo item by ID
+GET {{BaseAddress}}/api/todoitems/1
 
+### Create a new todo item
 POST {{BaseAddress}}/api/todoitems
 Content-Type: application/json
 
@@ -13,4 +15,17 @@ Content-Type: application/json
   "isComplete": true
 }
 
-###
+### Update an existing todo item
+PUT {{BaseAddress}}/api/todoitems/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "walk dog",
+  "isComplete": false
+}
+
+### Delete a todo item
+DELETE {{BaseAddress}}/api/todoitems/1
+
+
