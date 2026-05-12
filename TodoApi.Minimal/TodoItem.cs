@@ -6,7 +6,7 @@ namespace TodoApi.Minimal;
 /// <summary>
 /// Represents a to-do item in the database with an identifier, name, and completion status.
 /// </summary>
-public class Todo
+public class TodoItem
 {
     /// <summary>
     /// Gets or sets the unique identifier for the to-do item.
