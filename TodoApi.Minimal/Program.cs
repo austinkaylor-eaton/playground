@@ -43,51 +43,84 @@ app.UseSwaggerUi();
 
 #pragma warning disable CA2007
 app.MapGet("/todoitems", async (TodoDb db) =>
-    await db.Todos.ToListAsync());
+        await db.Todos.ToListAsync())
+    .WithName("GetAllTodos")
+    .WithSummary($"Get all {nameof(TodoItem)}s")
+    .WithDescription($"Retrieves the complete list of {nameof(TodoItem)}s from the database.")
+    .WithTags(Constants.TodoItemsTag)
+    .Produces<List<TodoItem>>();
 
 app.MapGet("/todoitems/complete", async (TodoDb db) =>
-    await db.Todos.Where(t => t.IsComplete).ToListAsync());
+        await db.Todos.Where(t => t.IsComplete).ToListAsync())
+    .WithName("GetCompleteTodos")
+    .WithSummary($"Get completed {nameof(TodoItem)}s")
+    .WithDescription($"Retrieves only {nameof(TodoItem)}s that have been marked as complete.")
+    .WithTags(Constants.TodoItemsTag)
+    .Produces<List<TodoItem>>();
 
 app.MapGet("/todoitems/{id:int}", async (int id, TodoDb db) =>
-    await db.Todos.FindAsync(id)
-        is { } todo
-        ? Results.Ok(todo)
-        : Results.NotFound());
+        await db.Todos.FindAsync(id)
+            is { } todo
+            ? Results.Ok(todo)
+            : Results.NotFound())
+    .WithName("GetTodoById")
+    .WithSummary($"Get a {nameof(TodoItem)} by ID")
+    .WithDescription($"Retrieves a single {nameof(TodoItem)} matching the specified ID. Returns 404 if not found.")
+    .WithTags(Constants.TodoItemsTag)
+    .Produces<TodoItem>()
+    .Produces(StatusCodes.Status404NotFound);
 
 app.MapPost("/todoitems", async (TodoItem todo, TodoDb db) =>
-{
-    db.Todos.Add(todo);
-    await db.SaveChangesAsync();
+    {
+        db.Todos.Add(todo);
+        await db.SaveChangesAsync();
 
-    return Results.Created($"/todoitems/{todo.Id}", todo);
-});
+        return Results.Created($"/todoitems/{todo.Id}", todo);
+    })
+    .WithName("CreateTodo")
+    .WithSummary($"Create a new {nameof(TodoItem)}")
+    .WithDescription($"Adds a new {nameof(TodoItem)} to the database and returns the created item with its assigned ID.")
+    .WithTags(Constants.TodoItemsTag)
+    .Produces<TodoItem>(StatusCodes.Status201Created);
 
 app.MapPut("/todoitems/{id:int}", async (int id, TodoItem inputTodo, TodoDb db) =>
-{
-    var todo = await db.Todos.FindAsync(id);
+    {
+        var todo = await db.Todos.FindAsync(id);
 
-    if (todo is null) return Results.NotFound();
+        if (todo is null) return Results.NotFound();
 
-    todo.Name = inputTodo.Name;
-    todo.IsComplete = inputTodo.IsComplete;
+        todo.Name = inputTodo.Name;
+        todo.IsComplete = inputTodo.IsComplete;
 
-    await db.SaveChangesAsync();
+        await db.SaveChangesAsync();
 
-    return Results.NoContent();
-});
+        return Results.NoContent();
+    })
+    .WithName("UpdateTodo")
+    .WithSummary($"Update an existing {nameof(TodoItem)}")
+    .WithDescription($"Updates the name and completion status of a {nameof(TodoItem)} matching the specified ID. Returns 404 if not found.")
+    .WithTags(Constants.TodoItemsTag)
+    .Produces(StatusCodes.Status204NoContent)
+    .Produces(StatusCodes.Status404NotFound);
 
 app.MapDelete("/todoitems/{id:int}", async (int id, TodoDb db) =>
-{
-    if (await db.Todos.FindAsync(id) is not { } todo)
     {
-        return Results.NotFound();
-    }
+        if (await db.Todos.FindAsync(id) is not { } todo)
+        {
+            return Results.NotFound();
+        }
 
-    db.Todos.Remove(todo);
-    await db.SaveChangesAsync();
-    return Results.NoContent();
+        db.Todos.Remove(todo);
+        await db.SaveChangesAsync();
 
-});
+        return Results.NoContent();
+    })
+    .WithName("DeleteTodo")
+    .WithSummary($"Delete a {nameof(TodoItem)}")
+    .WithDescription($"Removes a {nameof(TodoItem)} matching the specified ID from the database. Returns 404 if not found.")
+    .WithTags(Constants.TodoItemsTag)
+    .Produces(StatusCodes.Status204NoContent)
+    .Produces(StatusCodes.Status404NotFound);
 #pragma warning restore CA2007
 
 await app.RunAsync().ConfigureAwait(false);
