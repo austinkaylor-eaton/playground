@@ -19,3 +19,4 @@ A place for trying out new ideas
 - [Customize the build by folder](https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory?view=visualstudio)
 - [Centralized NuGet Package Management](https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management)
 - [Tutorial: Create a controller-based web API with ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-10.0&tabs=visual-studio)
+- [Configure NSwag in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-nswag?view=aspnetcore-8.0&viewFallbackFrom=aspnetcore-10.0&tabs=visual-studio#customize-api-documentation)
