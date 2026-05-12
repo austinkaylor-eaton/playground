@@ -1,4 +1,4 @@
-@BaseAddress = http://localhost:5012
+@BaseAddress = https://localhost:7170
 
 ### Get all todo items
 GET {{BaseAddress}}/api/todoitems
