@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Database;
+using TodoApi.Models;
 
 namespace TodoApi.Controllers;
 
@@ -12,11 +13,15 @@ public class TodoItemsController(TodoContext context) : ControllerBase
     /// <summary>
     /// Gets all <see cref="TodoItem"/>s from the database.
     /// </summary>
-    /// <returns>A list of <see cref="TodoItem"/>s.</returns>
+    /// <returns>A list of <see cref="TodoItemDTO"/>s.</returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
+    public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
     {
-        return await context.TodoItems.ToListAsync();
+        return await context.TodoItems
+            .Select(todoItem => TodoItemDTO.ToTodoItemDTO(todoItem))
+            // could also do
+            // .Select(todoItem => (TodoItemDTO)todoItem))
+            .ToListAsync();
     }
 
     // GET: api/TodoItems/5
