@@ -1,6 +1,12 @@
 # playground
 A place for trying out new ideas
 
+## Projects
+
+| Project | Description |
+| ------- | ----------- |
+| [TodoApi](TodoApi/README.md) | A RESTful Web API for managing todo items, built with ASP.NET Core 10 and Entity Framework Core |
+
 ## Articles
 
 ### Dr. Milan Jovanovich

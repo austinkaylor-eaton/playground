@@ -15,6 +15,8 @@ summary: "A simple Todo Web API built with ASP.NET Core 10 and Entity Framework 
 post_date: "2026-05-12"
 ---
 
+⬅️ [Back to Solution](../README.md)
+
 ## Overview
 
 TodoApi is a RESTful Web API for managing todo items, built with ASP.NET Core 10
