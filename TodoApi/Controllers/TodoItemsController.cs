@@ -52,7 +52,8 @@ public class TodoItemsController(TodoContext context) : ControllerBase
             return BadRequest();
         }
 
-        context.Entry(todoItem).State = EntityState.Modified;
+        TodoItem dbEntity = todoItem;
+        context.Entry(dbEntity).State = EntityState.Modified;
 
         try
         {
