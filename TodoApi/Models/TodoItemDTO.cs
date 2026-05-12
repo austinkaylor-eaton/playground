@@ -15,9 +15,8 @@ namespace TodoApi.Models;
 public class TodoItemDTO
 {
     /// <inheritdoc cref="TodoApi.Database.TodoItem.Id"/>
-    [Range(1, long.MaxValue)]
     [JsonPropertyName("id")]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWriting)]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public long Id { get; init; }
 
     /// <inheritdoc cref="TodoApi.Database.TodoItem.Name"/>
