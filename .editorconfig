@@ -384,16 +384,21 @@ dotnet_naming_style.s_camelcase.required_suffix =
 dotnet_naming_style.s_camelcase.word_separator = 
 dotnet_naming_style.s_camelcase.capitalization = camel_case
 
+[**/*Endpoints.cs]
 # CA1308: Normalize strings to uppercase — ToLowerInvariant is intentional for URL path construction
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1308
-[**/*Endpoints.cs]
 dotnet_diagnostic.CA1308.severity = none
 # CA2007: Do not directly await a Task — ConfigureAwait is unnecessary in Minimal API endpoints
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2007
 dotnet_diagnostic.CA2007.severity = none
 
+[**/Program.cs]
+# CA1308: Normalize strings to uppercase — ToLowerInvariant is intentional for URL path construction
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1308
+dotnet_diagnostic.CA1308.severity = none
+
+[**/*DTO.cs]
 # S101: Types should be named in PascalCase — DTO suffix is an intentional abbreviation
 # https://rules.sonarsource.com/csharp/RSPEC-101
-[**/*DTO.cs]
 dotnet_diagnostic.S101.severity = none
 
