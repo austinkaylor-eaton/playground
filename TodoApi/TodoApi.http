@@ -1,5 +1,5 @@
 @BaseAddress = https://localhost:7170
-@Id = 3
+@Id = 1
 
 ### Get all todo items
 GET {{BaseAddress}}/api/todoitems
