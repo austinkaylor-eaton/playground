@@ -15,6 +15,24 @@ public class TodoItemPatchDTO
 {
     /// <inheritdoc cref="TodoItem.Name"/>
     public string? Name { get; set; }
+
     /// <inheritdoc cref="TodoItem.IsComplete"/>
     public bool? IsComplete { get; set; }
+
+    /// <inheritdoc cref="ConvertToDatabaseEntity"/>
+    public static implicit operator TodoItem(TodoItemPatchDTO? dto) => ConvertToDatabaseEntity(dto);
+
+    /// <inheritdoc cref="ConvertToDatabaseEntity"/>
+    public static TodoItem ToTodoItem(TodoItemPatchDTO? dto) => ConvertToDatabaseEntity(dto);
+
+    /// <summary>
+    /// Converts a <see cref="TodoItemPatchDTO"/> to a <see cref="TodoItem"/>. <br/>
+    /// </summary>
+    /// <param name="dto">The <see cref="TodoItemPatchDTO"/> to convert.</param>
+    /// <returns>A <see cref="TodoItem"/> instance.</returns>
+    private static TodoItem ConvertToDatabaseEntity(TodoItemPatchDTO? dto)
+    {
+        return dto != null ? new TodoItem { Name = dto.Name, IsComplete = dto.IsComplete ?? false } : new TodoItem();
+    }
+
 }
