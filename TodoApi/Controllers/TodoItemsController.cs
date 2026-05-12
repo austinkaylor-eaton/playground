@@ -19,8 +19,6 @@ public class TodoItemsController(TodoContext context) : ControllerBase
     {
         return await context.TodoItems
             .Select(todoItem => TodoItemDTO.ToTodoItemDTO(todoItem))
-            // could also do
-            // .Select(todoItem => (TodoItemDTO)todoItem))
             .ToListAsync();
     }
 
@@ -60,14 +58,9 @@ public class TodoItemsController(TodoContext context) : ControllerBase
         {
             await context.SaveChangesAsync();
         }
-        catch (DbUpdateConcurrencyException)
+        catch (DbUpdateConcurrencyException) when (!TodoItemExists(id))
         {
-            if (!TodoItemExists(id))
-            {
-                return NotFound();
-            }
-
-            throw;
+            return NotFound();
         }
 
         return NoContent();
@@ -83,10 +76,16 @@ public class TodoItemsController(TodoContext context) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TodoItemDTO>> PostTodoItem(TodoItemDTO todoItem)
     {
-        context.TodoItems.Add(todoItem);
+        // Convert the DTO to a database entity explicitly so we can capture the database-generated ID after saving.
+        // The implicit conversion creates a new TodoItem instance; adding the DTO directly would lose the reference
+        // to the tracked entity, causing todoItem.Id to remain 0 in the response.
+        TodoItem dbEntity = TodoItemDTO.ToTodoItem(todoItem);
+        context.TodoItems.Add(dbEntity);
         await context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, todoItem);
+        TodoItemDTO createdDto = TodoItemDTO.ToTodoItemDTO(dbEntity);
+
+        return CreatedAtAction(nameof(GetTodoItem), new { id = createdDto.Id }, createdDto);
     }
 
     // DELETE: api/TodoItems/5
