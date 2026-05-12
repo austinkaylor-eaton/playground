@@ -30,12 +30,7 @@ public class TodoItemsController(TodoContext context) : ControllerBase
     {
         var todoItem = await context.TodoItems.FindAsync(id);
 
-        if (todoItem == null)
-        {
-            return NotFound();
-        }
-
-        return todoItem;
+        return todoItem == null ? NotFound() : todoItem;
     }
 
     // PUT: api/TodoItems/5
