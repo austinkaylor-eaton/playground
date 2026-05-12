@@ -66,14 +66,14 @@ TodoApi.Minimal/
 
 ## Key Packages
 
-| Package | Purpose |
-| ------- | ------- |
-| `Microsoft.AspNetCore.OpenApi` | OpenAPI document generation |
-| `Microsoft.EntityFrameworkCore` | ORM for data access |
-| `Microsoft.EntityFrameworkCore.InMemory` | In-memory database provider for development |
-| `Microsoft.EntityFrameworkCore.Sqlite` | SQLite database provider |
-| `Microsoft.EntityFrameworkCore.SqlServer` | SQL Server database provider |
-| `NSwag.AspNetCore` | Swagger UI for interactive API exploration |
+| Package                                   | Purpose                                     |
+|-------------------------------------------|---------------------------------------------|
+| `Microsoft.AspNetCore.OpenApi`            | OpenAPI document generation                 |
+| `Microsoft.EntityFrameworkCore`           | ORM for data access                         |
+| `Microsoft.EntityFrameworkCore.InMemory`  | In-memory database provider for development |
+| `Microsoft.EntityFrameworkCore.Sqlite`    | SQLite database provider                    |
+| `Microsoft.EntityFrameworkCore.SqlServer` | SQL Server database provider                |
+| `NSwag.AspNetCore`                        | Swagger UI for interactive API exploration  |
 
 ## Tutorial Progress
 
@@ -86,4 +86,5 @@ completed yet.
 
 - [ASP.NET Core Minimal APIs overview](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/overview?view=aspnetcore-10.0)
 - [Entity Framework Core documentation](https://learn.microsoft.com/en-us/ef/core/)
+- [Typed Results vs Results](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/responses?view=aspnetcore-10.0#typedresults-vs-results)
 
