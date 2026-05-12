@@ -32,10 +32,10 @@ public class TodoItemDTO
     public bool IsComplete { get; init; }
 
     /// <inheritdoc cref="ConvertToDatabaseEntity(TodoItemDTO)"/>
-    public static explicit operator TodoItem(TodoItemDTO? dto) => ConvertToDatabaseEntity(dto);
+    public static implicit operator TodoItem(TodoItemDTO? dto) => ConvertToDatabaseEntity(dto);
 
     /// <inheritdoc cref="ConvertToDataTransferObject(TodoItem)"/>
-    public static explicit operator TodoItemDTO(TodoItem? dbEntity) => ConvertToDataTransferObject(dbEntity);
+    public static implicit operator TodoItemDTO(TodoItem? dbEntity) => ConvertToDataTransferObject(dbEntity);
 
     /// <inheritdoc cref="ConvertToDatabaseEntity(TodoItemDTO)"/>
     public static TodoItem ToTodoItem(TodoItemDTO? dto) => ConvertToDatabaseEntity(dto);
