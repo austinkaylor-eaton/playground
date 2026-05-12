@@ -51,6 +51,7 @@ if (app.Environment.IsDevelopment())
 
 #endregion
 
-app.RegisterTodoItemsEndpoints();
+app.MapGroup($"/{Constants.TodoItems.EndpointGroupTag.ToLowerInvariant()}")
+    .MapTodoItemEndpoints();
 
 await app.RunAsync().ConfigureAwait(false);
