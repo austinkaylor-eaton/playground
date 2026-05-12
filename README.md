@@ -13,6 +13,9 @@ A place for trying out new ideas
 ### Dr. Milan Jovanovich
 - [6 Steps for Setting Up a New .NET Project the Right Way](https://www.milanjovanovic.tech/blog/6-steps-for-setting-up-a-new-dotnet-project-the-right-way)
 
+### Tess Ferrandez
+- [Organizing Minimal APIs](https://www.tessferrandez.com/blog/2023/10/31/organizing-minimal-apis.html)
+
 ### Microsoft Learn
 - [Tutorial: Create a minimal API with ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/tutorials/min-web-api?view=aspnetcore-10.0&tabs=visual-studio-code)
 - [Customize your build](https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=visualstudio)
