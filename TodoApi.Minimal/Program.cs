@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Minimal;
 
@@ -36,13 +37,25 @@ var app = builder.Build();
  * Enables the Swagger UI middleware, which provides a web-based interface for exploring and testing the API.
  * The Swagger UI is automatically generated based on the OpenAPI document.
  */
-app.UseOpenApi();
-app.UseSwaggerUi();
+if (app.Environment.IsDevelopment())
+{
+    app.UseOpenApi();
+    app.UseSwaggerUi(config =>
+    {
+        config.DocumentTitle = "TodoAPI";
+        config.Path = "/swagger";
+        config.DocumentPath = "/swagger/{documentName}/swagger.json";
+        config.DocExpansion = "list";
+    });
+}
 
 #endregion
 
 #pragma warning disable CA2007
-app.MapGet("/todoitems", async (TodoDb db) =>
+#pragma warning disable CA1308
+var todoItemEndpoints = app.MapGroup($"/{Constants.TodoItemsTag.ToLowerInvariant()}");
+
+todoItemEndpoints.MapGet("/", async (TodoDb db) =>
         await db.Todos.ToListAsync())
     .WithName("GetAllTodos")
     .WithSummary($"Get all {nameof(TodoItem)}s")
@@ -50,7 +63,7 @@ app.MapGet("/todoitems", async (TodoDb db) =>
     .WithTags(Constants.TodoItemsTag)
     .Produces<List<TodoItem>>();
 
-app.MapGet("/todoitems/complete", async (TodoDb db) =>
+todoItemEndpoints.MapGet("/complete", async (TodoDb db) =>
         await db.Todos.Where(t => t.IsComplete).ToListAsync())
     .WithName("GetCompleteTodos")
     .WithSummary($"Get completed {nameof(TodoItem)}s")
@@ -58,7 +71,7 @@ app.MapGet("/todoitems/complete", async (TodoDb db) =>
     .WithTags(Constants.TodoItemsTag)
     .Produces<List<TodoItem>>();
 
-app.MapGet("/todoitems/{id:int}", async (int id, TodoDb db) =>
+todoItemEndpoints.MapGet("/{id:int}", async (int id, TodoDb db) =>
         await db.Todos.FindAsync(id)
             is { } todo
             ? Results.Ok(todo)
@@ -70,12 +83,12 @@ app.MapGet("/todoitems/{id:int}", async (int id, TodoDb db) =>
     .Produces<TodoItem>()
     .Produces(StatusCodes.Status404NotFound);
 
-app.MapPost("/todoitems", async (TodoItem todo, TodoDb db) =>
+todoItemEndpoints.MapPost("/", async (TodoItem todo, TodoDb db) =>
     {
         db.Todos.Add(todo);
         await db.SaveChangesAsync();
 
-        return Results.Created($"/todoitems/{todo.Id}", todo);
+        return Results.Created($"/{Constants.TodoItemsTag.ToLowerInvariant()}/{todo.Id}", todo);
     })
     .WithName("CreateTodo")
     .WithSummary($"Create a new {nameof(TodoItem)}")
@@ -83,7 +96,7 @@ app.MapPost("/todoitems", async (TodoItem todo, TodoDb db) =>
     .WithTags(Constants.TodoItemsTag)
     .Produces<TodoItem>(StatusCodes.Status201Created);
 
-app.MapPut("/todoitems/{id:int}", async (int id, TodoItem inputTodo, TodoDb db) =>
+todoItemEndpoints.MapPut("/{id:int}", async (int id, TodoItem inputTodo, TodoDb db) =>
     {
         var todo = await db.Todos.FindAsync(id);
 
@@ -103,7 +116,7 @@ app.MapPut("/todoitems/{id:int}", async (int id, TodoItem inputTodo, TodoDb db) 
     .Produces(StatusCodes.Status204NoContent)
     .Produces(StatusCodes.Status404NotFound);
 
-app.MapPatch("/todoitems/{id:int}", async (int id, TodoItemPatchDTO inputTodo, TodoDb db) =>
+todoItemEndpoints.MapPatch("/{id:int}", async (int id, TodoItemPatchDTO inputTodo, TodoDb db) =>
     {
         var todo = await db.Todos.FindAsync(id);
 
@@ -124,7 +137,7 @@ app.MapPatch("/todoitems/{id:int}", async (int id, TodoItemPatchDTO inputTodo, T
     .Produces(StatusCodes.Status404NotFound)
     .Produces(StatusCodes.Status409Conflict);
 
-app.MapDelete("/todoitems/{id:int}", async (int id, TodoDb db) =>
+todoItemEndpoints.MapDelete("/{id:int}", async (int id, TodoDb db) =>
     {
         if (await db.Todos.FindAsync(id) is not { } todo)
         {
@@ -143,5 +156,6 @@ app.MapDelete("/todoitems/{id:int}", async (int id, TodoDb db) =>
     .Produces(StatusCodes.Status204NoContent)
     .Produces(StatusCodes.Status404NotFound);
 #pragma warning restore CA2007
+#pragma warning restore CA1308
 
 await app.RunAsync().ConfigureAwait(false);
