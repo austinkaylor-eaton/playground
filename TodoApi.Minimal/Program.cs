@@ -28,8 +28,18 @@ builder.Services.AddOpenApiDocument(config =>
 
 #endregion
 
-
 var app = builder.Build();
+
+#region Swagger Middleware
+
+/*
+ * Enables the Swagger UI middleware, which provides a web-based interface for exploring and testing the API.
+ * The Swagger UI is automatically generated based on the OpenAPI document.
+ */
+app.UseOpenApi();
+app.UseSwaggerUi();
+
+#endregion
 
 #pragma warning disable CA2007
 app.MapGet("/todoitems", async (TodoDb db) =>
