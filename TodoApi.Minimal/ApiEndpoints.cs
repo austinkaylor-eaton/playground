@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
-using Constants = TodoApi.Minimal.Constants;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace TodoApi.Minimal;
 
@@ -21,20 +19,21 @@ public static class ApiEndpoints
         group.WithTags(Constants.TodoItems.EndpointGroupTag);
         group.WithGroupName(Constants.TodoItems.EndpointGroupTag);
         group.WithSummary($"Endpoints for managing {nameof(TodoItem)}s");
+
         group.MapGet("/", GetAllTodos);
-        group.MapGet("/{id:int}", GetTodoById);
+        group.MapGet("/{id:long}", GetTodoById);
         group.MapGet("/complete", GetCompleteTodos);
         group.MapPost("/", CreateTodo);
-        group.MapPut("/{id:int}", UpdateTodo);
-        group.MapPatch("/{id:int}", PatchTodo);
-        group.MapDelete("/{id:int}", DeleteTodo);
+        group.MapPut("/{id:long}", UpdateTodo);
+        group.MapPatch("/{id:long}", PatchTodo);
+        group.MapDelete("/{id:long}", DeleteTodo);
     }
 
     /// <summary>
-    /// Gets all <see cref="TodoItem"/>s from the database and returns them as an array of <see cref="TodoItemDTO"/>s.
+    /// Gets all <see cref="TodoItem"/>s from the database
     /// </summary>
     /// <param name="db">The database context.</param>
-    /// <returns>An array of <see cref="TodoItemDTO"/>s.</returns>
+    /// <response code="200">Returns an array of all TodoItems</response>>
     private static async Task<IResult> GetAllTodos(TodoDb db)
     {
         var todos = await db.Todos
@@ -44,10 +43,10 @@ public static class ApiEndpoints
     }
 
     /// <summary>
-    /// Gets all completed <see cref="TodoItem"/>s from the database and returns them as an array of <see cref="TodoItemDTO"/>s.
+    /// Gets all completed <see cref="TodoItem"/>s from the database
     /// </summary>
     /// <param name="db">The database context.</param>
-    /// <returns>An array of <see cref="TodoItemDTO"/>s.</returns>
+    /// <response code="200">Returns an array of all completed TodoItems</response>
     private static async Task<IResult> GetCompleteTodos(TodoDb db)
     {
         var todos = await db.Todos
@@ -58,29 +57,30 @@ public static class ApiEndpoints
     }
 
     /// <summary>
-    /// Gets a single <see cref="TodoItem"/> by its ID from the database and returns it as a <see cref="TodoItemDTO"/>.
-    /// If the item is not found, returns a 404 Not Found response.
+    /// Gets a single <see cref="TodoItem"/> by its ID from the database
     /// </summary>
     /// <param name="id">The ID of the <see cref="TodoItem"/> to retrieve.</param>
     /// <param name="db">The database context.</param>
-    /// <returns>A <see cref="TodoItemDTO"/> if found; otherwise, a 404 Not Found response.</returns>
-    private static async Task<IResult> GetTodoById(int id, TodoDb db)
+    /// <response code="200">Returns the TodoItem with the specified ID</response>
+    /// <response code="404">If a TodoItem with the specified ID is not found</response>
+    private static async Task<IResult> GetTodoById(long id, TodoDb db)
     {
         var todoItem = await db.Todos.FindAsync(id);
 
-        return todoItem == null ?
+        return todoItem is null ?
             TypedResults.NotFound() :
-            TypedResults.Ok(todoItem);
+            TypedResults.Ok(TodoItemDTO.ToTodoItemDTO(todoItem));
     }
 
     /// <summary>
     /// Creates a new <see cref="TodoItem"/> in the database based on the provided <see cref="TodoItemDTO"/>
-    /// and returns the created item as a <see cref="TodoItemDTO"/> with a 201 Created response.
-    /// The location header of the response will contain the URL of the newly created item.
     /// </summary>
-    /// <param name="todoItemDTO">The <see cref="TodoItemDTO"/> containing the data for the new <see cref="TodoItem"/>.</param>
-    /// <param name="db">The database context.</param>
-    /// <returns>The created <see cref="TodoItemDTO"/> with a 201 Created response.</returns>
+    /// <param name="todoItemDTO">The <see cref="TodoItemDTO"/> containing the data for the new <see cref="TodoItem"/></param>
+    /// <param name="db">The database context</param>
+    /// <response code="201">Returns the newly created TodoItem</response>
+    /// <remarks>
+    /// The location header of the response will contain the URL of the newly created item.
+    /// </remarks>
     private static async Task<IResult> CreateTodo(TodoItemDTO todoItemDTO, TodoDb db)
     {
         // Convert the DTO to a database entity explicitly so we can capture the database-generated ID after saving.
@@ -96,15 +96,15 @@ public static class ApiEndpoints
     }
 
     /// <summary>
-    /// Updates an existing <see cref="TodoItem"/> in the database based on the provided ID and <see cref="TodoItemDTO"/>.
-    /// If the ID in the URL does not match the ID in the DTO, returns a 400 Bad Request response.
-    /// If the item with the specified ID does not exist, returns a 404 Not Found response. If the update is successful, returns a 204 No Content response.
+    /// Updates an existing <see cref="TodoItem"/> in the database based on the provided ID and <see cref="TodoItemDTO"/>
     /// </summary>
     /// <param name="id">The ID of the <see cref="TodoItem"/> to update.</param>
     /// <param name="todoItemDTO">The <see cref="TodoItemDTO"/> containing the updated data.</param>
     /// <param name="db">The database context.</param>
-    /// <returns>A 204 No Content response if the update is successful; otherwise, a 400 Bad Request or 404 Not Found response.</returns>
-    private static async Task<IResult> UpdateTodo(int id, TodoItemDTO todoItemDTO, TodoDb db)
+    /// <response code="400">If the ID in the URL does not match the ID in the request body</response>
+    /// <response code="404">If a TodoItem with the specified ID is not found</response>
+    /// <response code="204">If the update is successful</response>
+    private static async Task<IResult> UpdateTodo(long id, TodoItemDTO todoItemDTO, TodoDb db)
     {
         if (id != todoItemDTO.Id)
             return TypedResults.BadRequest();
@@ -124,14 +124,14 @@ public static class ApiEndpoints
     }
 
     /// <summary>
-    /// Partially updates an existing <see cref="TodoItem"/> in the database based on the provided ID and <see cref="TodoItemPatchDTO"/>.
-    /// If the item with the specified ID does not exist, returns a 404 Not Found response. If the update is successful, returns a 204 No Content response.
+    /// Partially updates an existing <see cref="TodoItem"/> in the database based on the provided ID and <see cref="TodoItemPatchDTO"/>
     /// </summary>
     /// <param name="id">The ID of the <see cref="TodoItem"/> to update.</param>
     /// <param name="todoItemDTO">The <see cref="TodoItemPatchDTO"/> containing the updated data.</param>
     /// <param name="db">The database context.</param>
-    /// <returns>A 204 No Content response if the update is successful; otherwise, a 404 Not Found response.</returns>
-    private static async Task<IResult> PatchTodo(int id, TodoItemPatchDTO todoItemDTO, TodoDb db)
+    /// <response code="404">If a TodoItem with the specified ID is not found</response>
+    /// <response code="204">If the update is successful</response>
+    private static async Task<IResult> PatchTodo(long id, TodoItemPatchDTO todoItemDTO, TodoDb db)
     {
         var todo = await db.Todos.FindAsync(id);
 
@@ -146,13 +146,13 @@ public static class ApiEndpoints
     }
 
     /// <summary>
-    /// Deletes an existing <see cref="TodoItem"/> from the database based on the provided ID.
-    /// If the item with the specified ID does not exist, returns a 404 Not Found response. If the deletion is successful, returns a 204 No Content response.
+    /// Deletes an existing <see cref="TodoItem"/> from the database based on the provided ID
     /// </summary>
     /// <param name="id">The ID of the <see cref="TodoItem"/> to delete.</param>
     /// <param name="db">The database context.</param>
-    /// <returns>A 204 No Content response if the deletion is successful; otherwise, a 404 Not Found response.</returns>
-    private static async Task<IResult> DeleteTodo(int id, TodoDb db)
+    /// <response code="404">If a TodoItem with the specified ID is not found</response>
+    /// <response code="204">If the deletion is successful</response>
+    private static async Task<IResult> DeleteTodo(long id, TodoDb db)
     {
         if (await db.Todos.FindAsync(id) is not { } todo)
         {
