@@ -15,5 +15,6 @@
 
   <ItemGroup>
     <PackageReference Include="SonarAnalyzer.CSharp" />
+    <PackageReference Include="JetBrains.Annotations" />
   </ItemGroup>
 </Project>

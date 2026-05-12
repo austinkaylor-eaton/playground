@@ -33,6 +33,16 @@ insert_final_newline = false
 
 #### .NET Coding Conventions ####
 [*.{cs,vb}]
+# Rule Overrides
+dotnet_diagnostic.CA1515.severity = none
+
+# CA2007: Do not directly await a Task — ConfigureAwait is unnecessary in ASP.NET Core controllers
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2007
+# CA1062: Validate arguments of public methods — unnecessary when nullable reference types are enabled
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1062
+[**/Controllers/**Controller.cs]
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA1062.severity = none
 
 # Organize usings
 dotnet_separate_import_directive_groups = true
@@ -373,4 +383,9 @@ dotnet_naming_style.s_camelcase.required_prefix = s_
 dotnet_naming_style.s_camelcase.required_suffix = 
 dotnet_naming_style.s_camelcase.word_separator = 
 dotnet_naming_style.s_camelcase.capitalization = camel_case
+
+# S101: Types should be named in PascalCase — DTO suffix is an intentional abbreviation
+# https://rules.sonarsource.com/csharp/RSPEC-101
+[**/*DTO.cs]
+dotnet_diagnostic.S101.severity = none
 
