@@ -29,13 +29,13 @@ public class TodoItemsController(TodoContext context) : ControllerBase
     /// Gets a specific <see cref="TodoItem"/> by ID from the database.
     /// </summary>
     /// <param name="id">The ID of the <see cref="TodoItem"/> to retrieve.</param>
-    /// <returns>The <see cref="TodoItem"/> with the specified ID.</returns>
+    /// <returns>The <see cref="TodoItemDTO"/> with the specified ID.</returns>
     [HttpGet("{id:long}")]
-    public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
+    public async Task<ActionResult<TodoItemDTO>> GetTodoItem(long id)
     {
         var todoItem = await context.TodoItems.FindAsync(id);
 
-        return todoItem == null ? NotFound() : todoItem;
+        return todoItem == null ? NotFound() : Ok(todoItem);
     }
 
     // PUT: api/TodoItems/5
@@ -44,10 +44,10 @@ public class TodoItemsController(TodoContext context) : ControllerBase
     /// Updates a specific <see cref="TodoItem"/> by ID in the database.
     /// </summary>
     /// <param name="id">The ID of the <see cref="TodoItem"/> to update.</param>
-    /// <param name="todoItem">The updated <see cref="TodoItem"/> object.</param>
+    /// <param name="todoItem">The updated <see cref="TodoItemDTO"/> object.</param>
     /// <returns>An <see cref="IActionResult"/> indicating the result of the operation.</returns>
     [HttpPut("{id:long}")]
-    public async Task<IActionResult> PutTodoItem(long id, TodoItem todoItem)
+    public async Task<IActionResult> PutTodoItem(long id, TodoItemDTO todoItem)
     {
         if (id != todoItem.Id)
         {
@@ -78,10 +78,10 @@ public class TodoItemsController(TodoContext context) : ControllerBase
     /// <summary>
     /// Creates a new <see cref="TodoItem"/> in the database.
     /// </summary>
-    /// <param name="todoItem">The <see cref="TodoItem"/> object to create.</param>
-    /// <returns>The created <see cref="TodoItem"/>.</returns>
+    /// <param name="todoItem">The <see cref="TodoItemDTO"/> object to create.</param>
+    /// <returns>The created <see cref="TodoItemDTO"/>.</returns>
     [HttpPost]
-    public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
+    public async Task<ActionResult<TodoItemDTO>> PostTodoItem(TodoItemDTO todoItem)
     {
         context.TodoItems.Add(todoItem);
         await context.SaveChangesAsync();
