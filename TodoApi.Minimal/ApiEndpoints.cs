@@ -12,118 +12,15 @@ namespace TodoApi.Minimal;
 public static class ApiEndpoints
 {
     /// <summary>
-    /// Registers the endpoints for the <see cref="TodoItem"/>s resource, such as the URL paths and HTTP methods for each endpoint,
-    /// </summary>
-    /// <param name="app">The <see cref="WebApplication"/> instance to register the endpoints with.</param>
-    public static void RegisterTodoItemsEndpoints(this WebApplication app)
-    {
-        var todoItemEndpoints = app.MapGroup($"/{Constants.TodoItems.Tag.ToLowerInvariant()}")
-            .WithTags(Constants.TodoItems.Tag);
-
-        todoItemEndpoints.MapGet("/", async (TodoDb db) =>
-                await db.Todos.ToListAsync())
-            .WithName("GetAllTodos")
-            .WithSummary($"Get all {nameof(TodoItem)}s")
-            .WithDescription($"Retrieves the complete list of {nameof(TodoItem)}s from the database.")
-            .Produces<List<TodoItem>>();
-
-        todoItemEndpoints.MapGet("/complete", async (TodoDb db) =>
-                await db.Todos.Where(t => t.IsComplete).ToListAsync())
-            .WithName("GetCompleteTodos")
-            .WithSummary($"Get completed {nameof(TodoItem)}s")
-            .WithDescription($"Retrieves only {nameof(TodoItem)}s that have been marked as complete.")
-            .Produces<List<TodoItem>>();
-
-        todoItemEndpoints.MapGet("/{id:int}", async Task<Results<Ok<TodoItem>, NotFound>>(int id, TodoDb db) =>
-                await db.Todos.FindAsync(id)
-                    is { } todo
-                    ? TypedResults.Ok(todo)
-                    : TypedResults.NotFound())
-            .WithName("GetTodoById")
-            .WithSummary($"Get a {nameof(TodoItem)} by ID")
-            .WithDescription($"Retrieves a single {nameof(TodoItem)} matching the specified ID. Returns 404 if not found.")
-            .Produces<TodoItem>()
-            .Produces(StatusCodes.Status404NotFound);
-
-        todoItemEndpoints.MapPost("/", async (TodoItem todo, TodoDb db) =>
-            {
-                db.Todos.Add(todo);
-                await db.SaveChangesAsync();
-
-                return Results.Created($"/{Constants.TodoItems.Tag.ToLowerInvariant()}/{todo.Id}", todo);
-            })
-            .WithName("CreateTodo")
-            .WithSummary($"Create a new {nameof(TodoItem)}")
-            .WithDescription($"Adds a new {nameof(TodoItem)} to the database and returns the created item with its assigned ID.")
-            .Produces<TodoItem>(StatusCodes.Status201Created);
-
-        todoItemEndpoints.MapPut("/{id:int}", async (int id, TodoItem inputTodo, TodoDb db) =>
-            {
-                var todo = await db.Todos.FindAsync(id);
-
-                if (todo is null) return Results.NotFound();
-
-                todo.Name = inputTodo.Name;
-                todo.IsComplete = inputTodo.IsComplete;
-
-                await db.SaveChangesAsync();
-
-                return Results.NoContent();
-            })
-            .WithName("UpdateTodo")
-            .WithSummary($"Update an existing {nameof(TodoItem)}")
-            .WithDescription($"Updates the name and completion status of a {nameof(TodoItem)} matching the specified ID. Returns 404 if not found.")
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound);
-
-        todoItemEndpoints.MapPatch("/{id:int}", async (int id, TodoItemPatchDTO inputTodo, TodoDb db) =>
-            {
-                var todo = await db.Todos.FindAsync(id);
-
-                if (todo is null) return Results.NotFound();
-
-                if (inputTodo.Name is not null) todo.Name = inputTodo.Name;
-                if (inputTodo.IsComplete is not null) todo.IsComplete = inputTodo.IsComplete.Value;
-
-                await db.SaveChangesAsync();
-
-                return Results.NoContent();
-            })
-            .WithName("PatchTodo")
-            .WithSummary($"Patch a {nameof(TodoItem)}")
-            .WithDescription($"Updates specific fields of a {nameof(TodoItem)} matching the specified ID. Returns 404 if not found.")
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status409Conflict);
-
-        todoItemEndpoints.MapDelete("/{id:int}", async (int id, TodoDb db) =>
-            {
-                if (await db.Todos.FindAsync(id) is not { } todo)
-                {
-                    return Results.NotFound();
-                }
-
-                db.Todos.Remove(todo);
-                await db.SaveChangesAsync();
-
-                return Results.NoContent();
-            })
-            .WithName("DeleteTodo")
-            .WithSummary($"Delete a {nameof(TodoItem)}")
-            .WithDescription($"Removes a {nameof(TodoItem)} matching the specified ID from the database. Returns 404 if not found.")
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound);
-    }
-
-    /// <summary>
     /// Registers the endpoints for the <see cref="TodoItem"/>s resource, such as the URL paths and HTTP methods for each endpoint, with a <see cref="RouteGroupBuilder"/> instead of a <see cref="WebApplication"/>.
     /// </summary>
     /// <param name="group">The <see cref="RouteGroupBuilder"/> to which the endpoints will be added.</param>
     /// <returns>The <see cref="RouteGroupBuilder"/> with the registered endpoints.</returns>
-    public static RouteGroupBuilder MapTodoItemEndpoints(this RouteGroupBuilder group)
+    public static void MapTodoItemEndpoints(this RouteGroupBuilder group)
     {
-        group.WithTags(Constants.TodoItems.Tag);
-        group.WithGroupName(Constants.TodoItems.Tag);
+        group.WithTags(Constants.TodoItems.EndpointGroupTag);
+        group.WithGroupName(Constants.TodoItems.EndpointGroupTag);
+        group.WithSummary($"Endpoints for managing {nameof(TodoItem)}s");
         group.MapGet("/", GetAllTodos);
         group.MapGet("/{id:int}", GetTodoById);
         group.MapGet("/complete", GetCompleteTodos);
@@ -131,8 +28,6 @@ public static class ApiEndpoints
         group.MapPut("/{id:int}", UpdateTodo);
         group.MapPatch("/{id:int}", PatchTodo);
         group.MapDelete("/{id:int}", DeleteTodo);
-
-        return group;
     }
 
     /// <summary>
@@ -197,7 +92,7 @@ public static class ApiEndpoints
 
         TodoItemDTO createdDto = TodoItemDTO.ToTodoItemDTO(dbEntity);
 
-        return TypedResults.Created($"/{Constants.TodoItems.Tag}/{createdDto.Id}", createdDto);
+        return TypedResults.Created($"/{Constants.TodoItems.EndpointGroupTag}/{createdDto.Id}", createdDto);
     }
 
     /// <summary>
