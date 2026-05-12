@@ -10,7 +10,7 @@
             /// <summary>
             /// Constant used to group all endpoints under a single tag in the Swagger UI
             /// </summary>
-            public const string Tag = "TodoItems";
+            public const string EndpointGroupTag = "TodoItems";
 
             /// <summary>
             /// Constant used to define the URL path for any TodoItem endpoints that retrieves a specific TodoItem by its ID
