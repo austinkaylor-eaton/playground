@@ -36,6 +36,11 @@ insert_final_newline = false
 # Rule Overrides
 dotnet_diagnostic.CA1515.severity = none
 
+# CA2007: Do not directly await a Task — ConfigureAwait is unnecessary in ASP.NET Core controllers
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2007
+[**/Controllers/**Controller.cs]
+dotnet_diagnostic.CA2007.severity = none
+
 # Organize usings
 dotnet_separate_import_directive_groups = true
 dotnet_sort_system_directives_first = true
