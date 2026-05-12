@@ -103,6 +103,27 @@ app.MapPut("/todoitems/{id:int}", async (int id, TodoItem inputTodo, TodoDb db) 
     .Produces(StatusCodes.Status204NoContent)
     .Produces(StatusCodes.Status404NotFound);
 
+app.MapPatch("/todoitems/{id:int}", async (int id, TodoItemPatchDTO inputTodo, TodoDb db) =>
+    {
+        var todo = await db.Todos.FindAsync(id);
+
+        if (todo is null) return Results.NotFound();
+
+        if (inputTodo.Name is not null) todo.Name = inputTodo.Name;
+        if (inputTodo.IsComplete is not null) todo.IsComplete = inputTodo.IsComplete.Value;
+
+        await db.SaveChangesAsync();
+
+        return Results.NoContent();
+    })
+    .WithName("PatchTodo")
+    .WithSummary($"Patch a {nameof(TodoItem)}")
+    .WithDescription($"Updates specific fields of a {nameof(TodoItem)} matching the specified ID. Returns 404 if not found.")
+    .WithTags(Constants.TodoItemsTag)
+    .Produces(StatusCodes.Status204NoContent)
+    .Produces(StatusCodes.Status404NotFound)
+    .Produces(StatusCodes.Status409Conflict);
+
 app.MapDelete("/todoitems/{id:int}", async (int id, TodoDb db) =>
     {
         if (await db.Todos.FindAsync(id) is not { } todo)
