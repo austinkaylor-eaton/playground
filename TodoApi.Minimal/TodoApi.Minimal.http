@@ -27,5 +27,13 @@ Content-Type: application/json
   "isComplete": false
 }
 
+### Patch an existing todo item
+PATCH {{BaseAddress}}/api/todoitems/{{Id}}
+Content-Type: application/json
+
+{
+  "isComplete": true
+}
+
 ### Delete a todo item
 DELETE {{BaseAddress}}/api/todoitems/{{Id}}
