@@ -22,8 +22,8 @@ builder.Services.AddEndpointsApiExplorer();
  */
 builder.Services.AddOpenApiDocument(config =>
 {
-    config.DocumentName = "TodoAPI";
-    config.Title = "TodoAPI v1";
+    config.DocumentName = nameof(TodoApi);
+    config.Title = $"{nameof(TodoApi)} v1";
     config.Version = "v1";
 });
 
@@ -42,7 +42,7 @@ if (app.Environment.IsDevelopment())
     app.UseOpenApi();
     app.UseSwaggerUi(config =>
     {
-        config.DocumentTitle = "TodoAPI";
+        config.DocumentTitle = nameof(TodoApi);
         config.Path = "/swagger";
         config.DocumentPath = "/swagger/{documentName}/swagger.json";
         config.DocExpansion = "list";
