@@ -401,4 +401,7 @@ dotnet_diagnostic.CA1308.severity = none
 # S101: Types should be named in PascalCase — DTO suffix is an intentional abbreviation
 # https://rules.sonarsource.com/csharp/RSPEC-101
 dotnet_diagnostic.S101.severity = none
+# CA1062: Validate arguments of public methods — unnecessary when nullable reference types are enabled
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1062
+dotnet_diagnostic.CA1062.severity = none
 
