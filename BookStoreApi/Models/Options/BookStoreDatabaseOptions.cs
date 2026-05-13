@@ -3,8 +3,16 @@
 /// <summary>
 /// Represents the configuration options for the bookstore database, including connection string, database name, and collection name.
 /// </summary>
-public class BookStoreDatabaseOptions
+/// <remarks>
+/// <see href="https://learn.microsoft.com/en-us/dotnet/core/extensions/options">Options pattern in .NET</see> <br/>
+/// </remarks>
+public sealed class BookStoreDatabaseOptions
 {
+    /// <summary>
+    /// The name of the root section in the configuration file (e.g., appsettings.json) that contains the bookstore database settings.
+    /// </summary>
+    public const string Section = "BookStoreDatabase";
+
     /// <summary>
     /// The connection string used to connect to the bookstore database.
     /// </summary>
