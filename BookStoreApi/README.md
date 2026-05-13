@@ -18,16 +18,16 @@ A RESTful Web API for managing books in a bookstore, built with ASP.NET Core 10 
 ## Overview
 
 This project demonstrates how to build a web API using ASP.NET Core with MongoDB as the
-data store. It follows the controller-based API pattern and provides CRUD operations for
+data store. It follows the Minimal API pattern and provides CRUD operations for
 managing book records.
 
 ## Technologies
 
-| Technology | Purpose |
-| ---------- | ------- |
-| ASP.NET Core 10 | Web framework |
-| MongoDB | NoSQL document database |
-| OpenAPI | API documentation |
+| Technology      | Purpose                 |
+|-----------------|-------------------------|
+| ASP.NET Core 10 | Web framework           |
+| MongoDB         | NoSQL document database |
+| OpenAPI         | API documentation       |
 
 ## Getting Started
 
@@ -51,12 +51,12 @@ This starts MongoDB on `localhost:27017` and creates the `BookStore` database wi
 
 #### Useful Docker Compose Commands
 
-| Command | Description |
-| ------- | ----------- |
-| `docker compose up -d` | Start MongoDB in the background |
-| `docker compose down` | Stop and remove the container |
-| `docker compose down -v` | Stop, remove container, **and delete data volume** |
-| `docker compose logs -f mongodb` | Tail the MongoDB container logs |
+| Command                          | Description                                        |
+|----------------------------------|----------------------------------------------------|
+| `docker compose up -d`           | Start MongoDB in the background                    |
+| `docker compose down`            | Stop and remove the container                      |
+| `docker compose down -v`         | Stop, remove container, **and delete data volume** |
+| `docker compose logs -f mongodb` | Tail the MongoDB container logs                    |
 
 #### Connecting to MongoDB Shell
 
@@ -81,16 +81,32 @@ dotnet run
 
 The API will be available at the URL specified in `Properties/launchSettings.json`.
 
+## API Endpoints
+
+All endpoints are grouped under `/books`.
+
+| Method | Route         | Description             |
+|--------|---------------|-------------------------|
+| GET    | `/books`      | Retrieve all books      |
+| GET    | `/books/{id}` | Retrieve a book by ID   |
+| POST   | `/books`      | Create a new book       |
+| PUT    | `/books/{id}` | Update an existing book |
+| DELETE | `/books/{id}` | Delete a book           |
+
 ## Project Structure
 
 ```text
 BookStoreApi/
-├── Controllers/         # API controllers
-├── Properties/          # Launch settings
-├── appsettings.json     # Application configuration
-├── docker-compose.yml   # MongoDB container definition
-├── mongo-init.js        # MongoDB seed data script
-├── Program.cs           # Application entry point
+├── Models/
+│   ├── Database/            # MongoDB document models
+│   ├── DataTransferObjects/ # DTOs for API requests/responses
+│   └── Options/             # Configuration options and validation
+├── Services/                # Business logic and data access
+├── Properties/              # Launch settings
+├── appsettings.json         # Application configuration
+├── docker-compose.yml       # MongoDB container definition
+├── mongo-init.js            # MongoDB seed data script
+├── Program.cs               # Application entry point and endpoint definitions
 └── BookStoreApi.csproj
 ```
 
