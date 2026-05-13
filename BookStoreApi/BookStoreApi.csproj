@@ -8,10 +8,13 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <PackageReference Include="MongoDB.Driver"/>
+        <PackageReference Include="SharpCompress"/>
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Controllers\" />
+      <Folder Include="Models\DataTransferObjects\" />
     </ItemGroup>
 
 </Project>
