@@ -1,0 +1,39 @@
+@BaseAddress = https://localhost:7171
+
+@Id = 1
+
+### Get all todo items
+GET {{BaseAddress}}/api/todoitems
+
+### Get a specific todo item by ID
+GET {{BaseAddress}}/api/todoitems/{{Id}}
+
+### Create a new todo item
+POST {{BaseAddress}}/api/todoitems
+Content-Type: application/json
+
+{
+  "name": "walk dog",
+  "isComplete": true
+}
+
+### Update an existing todo item
+PUT {{BaseAddress}}/api/todoitems/{{Id}}
+Content-Type: application/json
+
+{
+  "id": {{Id}},
+  "name": "walk dog",
+  "isComplete": false
+}
+
+### Patch an existing todo item
+PATCH {{BaseAddress}}/api/todoitems/{{Id}}
+Content-Type: application/json
+
+{
+  "isComplete": true
+}
+
+### Delete a todo item
+DELETE {{BaseAddress}}/api/todoitems/{{Id}}
