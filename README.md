@@ -5,6 +5,7 @@ A place for trying out new ideas
 
 | Project                                      | Description                                                                                     |
 |----------------------------------------------|-------------------------------------------------------------------------------------------------|
+| [BookStoreApi](BookStoreApi/README.md)       | A RESTful Web API for managing books, built with ASP.NET Core 10 and MongoDB                    |
 | [TodoApi](TodoApi/README.md)                 | A RESTful Web API for managing todo items, built with ASP.NET Core 10 and Entity Framework Core |
 | [TodoApi.Minimal](TodoApi.Minimal/README.md) | A minimal web API built with ASP.NET Core 10 and the Minimal API approach                       |
 
@@ -17,6 +18,7 @@ A place for trying out new ideas
 - [Organizing Minimal APIs](https://www.tessferrandez.com/blog/2023/10/31/organizing-minimal-apis.html)
 
 ### Microsoft Learn
+- [Tutorial: Create a web API with ASP.NET Core and MongoDB](https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-mongo-app?view=aspnetcore-10.0&tabs=visual-studio)
 - [Tutorial: Create a minimal API with ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/tutorials/min-web-api?view=aspnetcore-10.0&tabs=visual-studio-code)
 - [Customize your build](https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=visualstudio)
 - [Customize the build by folder](https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-by-directory?view=visualstudio)

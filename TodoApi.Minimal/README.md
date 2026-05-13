@@ -41,27 +41,48 @@ dotnet run
 The API is available at the URLs configured in
 `Properties/launchSettings.json`:
 
-| Profile | URL |
-| ------- | --- |
-| http | `http://localhost:5258` |
-| https | `https://localhost:7171` |
+| Profile | URL                      |
+|---------|--------------------------|
+| http    | `http://localhost:5258`  |
+| https   | `https://localhost:7171` |
 
 ### Explore the API
 
-When running in the **Development** environment, an OpenAPI document is
-served at `/openapi/v1.json`.
+When running in the **Development** environment, Swagger UI is available
+at `/swagger` for interactive API exploration. The OpenAPI document is
+served at `/swagger/TodoApi/swagger.json`.
+
+## API Endpoints
+
+All endpoints are grouped under `/todoitems`.
+
+| Method | Route                 | Description                        |
+|--------|-----------------------|------------------------------------|
+| GET    | `/todoitems`          | Retrieve all to-do items           |
+| GET    | `/todoitems/{id}`     | Retrieve a to-do item by ID        |
+| GET    | `/todoitems/complete` | Retrieve all completed to-do items |
+| POST   | `/todoitems`          | Create a new to-do item            |
+| PUT    | `/todoitems/{id}`     | Update an existing to-do item      |
+| PATCH  | `/todoitems/{id}`     | Partially update a to-do item      |
+| DELETE | `/todoitems/{id}`     | Delete a to-do item                |
 
 ## Project Structure
 
 ```text
 TodoApi.Minimal/
-├── Program.cs                        # Application entry point and endpoint definitions
-├── TodoApi.Minimal.csproj            # Project file with package references
-├── appsettings.json                  # Application configuration
-├── appsettings.Development.json      # Development-specific configuration
-├── TodoApi.Minimal.http              # HTTP request file for testing endpoints
+├── Program.cs               # Application entry point and middleware configuration
+├── ApiEndpoints.cs          # Endpoint definitions using RouteGroupBuilder
+├── TodoItem.cs              # Database entity model
+├── TodoItemDTO.cs           # Data transfer object for full CRUD operations
+├── TodoItemPatchDTO.cs      # Data transfer object for partial updates
+├── TodoDb.cs                # EF Core DbContext
+├── Constants.cs             # Shared constants (endpoint tags, URL paths)
+├── TodoApi.Minimal.csproj   # Project file with package references
+├── TodoApi.Minimal.http     # HTTP request file for testing endpoints
+├── appsettings.json         # Application configuration
+├── appsettings.Development.json
 └── Properties/
-    └── launchSettings.json           # Launch profiles (ports, environment)
+    └── launchSettings.json  # Launch profiles (ports, environment)
 ```
 
 ## Key Packages
@@ -77,10 +98,10 @@ TodoApi.Minimal/
 
 ## Tutorial Progress
 
-This project is in its **initial state** — the scaffolded template with a
-sample `/weatherforecast` endpoint. The remaining tutorial steps (adding a
-model, database context, and CRUD endpoints for Todo items) have not been
-completed yet.
+This project is **complete** — all tutorial steps have been implemented,
+including the model, database context, CRUD endpoints, DTOs to prevent
+over-posting, and Swagger UI for interactive API exploration. A PATCH
+endpoint was added as an extension beyond the original tutorial.
 
 ## Additional Resources
 
