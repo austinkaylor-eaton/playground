@@ -16,15 +16,23 @@ public sealed class BookStoreDatabaseOptions
     /// <summary>
     /// The connection string used to connect to the bookstore database.
     /// </summary>
-    public string ConnectionString { get; set; } = null!;
+    /// <remarks>
+    /// Using the ConfigurationKeyName attribute allows overriding the default behavior of binding configuration properties, which typically match the property name. <br/>
+    /// In this case, it explicitly specifies that the configuration key for this property is "ConnectionString",
+    /// which can be useful if the property name in the class differs from the key in the configuration file,
+    /// or to ensure consistency in naming conventions across different parts of the application. <br/>
+    /// See <see href="https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options?view=aspnetcore-10.0#specify-a-custom-key-name-for-a-configuration-property-using-configurationkeyname">Specify a custom key name for a configuration property using ConfigurationKeyName</see> for more details.
+    /// </remarks>
+    [ConfigurationKeyName("ConnectionString")]
+    public required string ConnectionString { get; set; }
 
     /// <summary>
     /// The name of the bookstore database.
     /// </summary>
-    public string DatabaseName { get; set; } = null!;
+     public required string DatabaseName { get; set; }
 
     /// <summary>
     /// The name of the collection that stores the books in the bookstore database.
     /// </summary>
-    public string BooksCollectionName { get; set; } = null!;
+    public required string BooksCollectionName { get; set; }
 }
