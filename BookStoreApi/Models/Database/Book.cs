@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System.Text.Json.Serialization;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace BookStoreApi.Models.Database;
@@ -25,23 +26,27 @@ public class Book
     /// The name of the book.
     /// </summary>
     [BsonElement("Name")]
+    [JsonPropertyName("Name")]
     public string BookName { get; set; } = null!;
 
     /// <summary>
     /// The price of the book.
     /// </summary>
     [BsonElement("Price")]
+    [JsonPropertyName("Price")]
     public decimal Price { get; set; }
 
     /// <summary>
     /// The category of the book.
     /// </summary>
     [BsonElement("Category")]
+    [JsonPropertyName("Category")]
     public string Category { get; set; } = null!;
 
     /// <summary>
     /// The author of the book.
     /// </summary>
     [BsonElement("Author")]
+    [JsonPropertyName("Author")]
     public string Author { get; set; } = null!;
 }
