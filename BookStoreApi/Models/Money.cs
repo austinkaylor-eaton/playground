@@ -6,8 +6,8 @@ namespace BookStoreApi.Models;
 /// Initializes a new instance of the <see cref="Money"/> struct.
 /// </summary>
 /// <param name="amount">The amount of money.</param>
-/// <param name="currency">The currency code.</param>
-public struct Money(decimal amount,  Currency currency) : IEquatable<Money>
+/// <param name="currencyCode">The currency code.</param>
+public struct Money(decimal amount,  CurrencyCode currencyCode) : IEquatable<Money>
 {
     /// <summary>
     /// Gets the amount of money.
@@ -18,10 +18,10 @@ public struct Money(decimal amount,  Currency currency) : IEquatable<Money>
     /// <summary>
     /// Gets the currency code (e.g., "USD", "EUR").
     /// </summary>
-    public Currency Currency { get; } = currency;
+    public CurrencyCode CurrencyCode { get; } = currencyCode;
 
     /// <inheritdoc/>
-    public override readonly int GetHashCode() => HashCode.Combine(Amount, Currency);
+    public override readonly int GetHashCode() => HashCode.Combine(Amount, CurrencyCode);
 
     /// <summary>
     /// Determines whether two <see cref="Money"/> instances are equal by comparing their amount and currency.
@@ -58,5 +58,5 @@ public struct Money(decimal amount,  Currency currency) : IEquatable<Money>
     /// </summary>
     /// <param name="other">The <see cref="Money"/> instance to compare with the current instance.</param>
     /// <returns><c>true</c> if the specified <see cref="Money"/> instance is equal to the current instance; otherwise, <c>false</c>.</returns>
-    public readonly bool Equals(Money other) => Amount == other.Amount && Currency == other.Currency;
+    public readonly bool Equals(Money other) => Amount == other.Amount && CurrencyCode == other.CurrencyCode;
 }
