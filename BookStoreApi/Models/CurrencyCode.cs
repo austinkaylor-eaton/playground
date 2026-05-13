@@ -6,7 +6,7 @@
 /// <remarks>
 /// Directly used by the <see cref="Money"/> struct
 /// </remarks>
-public enum Currency
+public enum CurrencyCode
 {
     USD, // US Dollar
     EUR, // Euro
