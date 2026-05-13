@@ -1,4 +1,5 @@
 using BookStoreApi.Models.Options;
+using BookStoreApi.Services;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.Configure<BookStoreDatabaseOptions>(
 
 builder.Services.AddSingleton<IValidateOptions<BookStoreDatabaseOptions>,
     ValidateBookStoreDatabaseOptions>();
+
+builder.Services.AddSingleton<BooksService>();
 
 var app = builder.Build();
 
