@@ -11,7 +11,7 @@ public sealed class BookStoreDatabaseOptions
     /// <summary>
     /// The name of the root section in the configuration file (e.g., appsettings.json) that contains the bookstore database settings.
     /// </summary>
-    public const string Section = "BookStoreDatabase";
+    public const string SectionName = "BookStoreDatabase";
 
     /// <summary>
     /// The connection string used to connect to the bookstore database.
