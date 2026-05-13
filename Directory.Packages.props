@@ -19,5 +19,6 @@
     <PackageVersion Include="NuGet.Packaging" Version="6.12.5" />
     <PackageVersion Include="NuGet.Protocol" Version="6.12.5" />
     <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageVersion Include="MongoDB.Driver" Version="3.8.1" />
   </ItemGroup>
 </Project>
