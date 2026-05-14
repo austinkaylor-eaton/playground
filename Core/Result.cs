@@ -69,4 +69,43 @@ public static class Result
         string.IsNullOrWhiteSpace(error)
             ? throw new ArgumentException("Error message must not be null or empty.", nameof(error))
             : new Result<T>(default, error);
+
+    /// <summary>
+    /// Transforms the value of a successful result using the given mapping function.
+    /// </summary>
+    /// <typeparam name="TIn">The type of the input result value.</typeparam>
+    /// <typeparam name="TOut">The type of the output result value.</typeparam>
+    /// <param name="result">The input result to transform.</param>
+    /// <param name="map">The mapping function to apply to the successful result value.</param>
+    /// <returns>A new <see cref="Result{TOut}"/> containing the mapped value if the input result was successful, or the original error if it was a failure.</returns>
+    public static Result<TOut> Map<TIn, TOut>(this Result<TIn> result, Func<TIn, TOut> map)
+    {
+        ArgumentNullException.ThrowIfNull(map);
+        ArgumentNullException.ThrowIfNull(result.Value);
+        ArgumentNullException.ThrowIfNull(result.Error);
+
+        return result.IsSuccess
+            ? Success(map(result.Value))
+            : Failure<TOut>(result.Error);
+    }
+
+
+    /// <summary>
+    /// Chains a dependent operation that itself returns a Result.
+    /// </summary>
+    /// <typeparam name="TIn">The type of the input result value.</typeparam>
+    /// <typeparam name="TOut">The type of the output result value.</typeparam>
+    /// <param name="result">The input result to chain from.</param>
+    /// <param name="bind">The function that takes the successful result value and returns a new Result.</param>
+    /// <returns>The Result returned by the bind function if the input result was successful, or the original error if it was a failure.</returns>
+    public static Result<TOut> Bind<TIn, TOut>(this Result<TIn> result, Func<TIn, Result<TOut>> bind)
+    {
+        ArgumentNullException.ThrowIfNull(bind);
+        ArgumentNullException.ThrowIfNull(result.Value);
+        ArgumentNullException.ThrowIfNull(result.Error);
+
+        return result.IsSuccess
+            ? bind(result.Value)
+            : Failure<TOut>(result.Error);
+    }
 }
