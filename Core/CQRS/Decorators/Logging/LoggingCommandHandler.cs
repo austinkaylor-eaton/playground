@@ -36,7 +36,7 @@ public sealed class LoggingCommandHandler<TCommand> : ICommandHandler<TCommand>
     {
         var commandName = typeof(TCommand).Name;
 
-        CQRS.Log.HandlingCommand(_logger, commandName);
+        Log.HandlingCommand(_logger, commandName);
         var startTime = Stopwatch.GetTimestamp();
 
         try
@@ -44,12 +44,12 @@ public sealed class LoggingCommandHandler<TCommand> : ICommandHandler<TCommand>
             await _inner.Handle(command, cancellationToken).ConfigureAwait(false);
 
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            CQRS.Log.HandledCommand(_logger, commandName, elapsed.TotalMilliseconds);
+            Log.HandledCommand(_logger, commandName, elapsed.TotalMilliseconds);
         }
         catch (Exception ex)
         {
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            CQRS.Log.CommandFailed(_logger, ex, commandName, elapsed.TotalMilliseconds);
+            Log.CommandFailed(_logger, ex, commandName, elapsed.TotalMilliseconds);
 
             throw;
         }

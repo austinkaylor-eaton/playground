@@ -67,7 +67,7 @@ public sealed class ValidationQueryHandler<TQuery, TResponse> : IQueryHandler<TQ
         }
 
         var queryName = typeof(TQuery).Name;
-        CQRS.Log.ValidationFailed(_logger, queryName, failures.Count);
+        Log.ValidationFailed(_logger, queryName, failures.Count);
 
         throw new ValidationException(failures);
 
