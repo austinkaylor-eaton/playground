@@ -10,6 +10,13 @@ namespace Core.CQRS.Decorators;
 /// </summary>
 /// <typeparam name="TCommand">The type of command being handled.</typeparam>
 /// <typeparam name="TResponse">The type of the command result.</typeparam>
+/// <example>
+/// Register the handler with validation in the DI container:
+/// <code>
+/// services.AddValidator&lt;CreateUserCommand, CreateUserCommandValidator&gt;();
+/// services.AddCommandHandlerWithValidation&lt;CreateUserCommand, Guid, CreateUserCommandHandler&gt;();
+/// </code>
+/// </example>
 /// <seealso cref="ICommandHandler{TCommand, TResponse}"/>
 public sealed class ValidationCommandHandlerWithResponse<TCommand, TResponse>
     : ICommandHandler<TCommand, TResponse>
@@ -38,30 +45,32 @@ public sealed class ValidationCommandHandlerWithResponse<TCommand, TResponse>
     /// <inheritdoc />
     public async Task<TResponse> Handle(TCommand command, CancellationToken cancellationToken)
     {
-        if (validators.Any())
+        if (!validators.Any())
         {
-            var failures = new List<ValidationFailure>();
+            return await inner.Handle(command, cancellationToken).ConfigureAwait(false);
+        }
 
-            foreach (var validator in validators)
+        var failures = new List<ValidationFailure>();
+
+        foreach (var validator in validators)
+        {
+            var results = await validator.ValidateAsync(command, cancellationToken).ConfigureAwait(false);
+
+            if (results is { Count: > 0 })
             {
-                var results = await validator.ValidateAsync(command, cancellationToken).ConfigureAwait(false);
-
-                if (results is { Count: > 0 })
-                {
-                    failures.AddRange(results);
-                }
-            }
-
-            if (failures is { Count: > 0 })
-            {
-                var commandName = typeof(TCommand).Name;
-                Log.ValidationFailed(logger, commandName, failures.Count);
-
-                throw new ValidationException(failures);
+                failures.AddRange(results);
             }
         }
 
-        return await inner.Handle(command, cancellationToken).ConfigureAwait(false);
+        if (failures is not { Count: > 0 })
+        {
+            return await inner.Handle(command, cancellationToken).ConfigureAwait(false);
+        }
+
+        var commandName = typeof(TCommand).Name;
+        Log.ValidationFailed(logger, commandName, failures.Count);
+
+        throw new ValidationException(failures);
+
     }
 }
-

@@ -10,6 +10,13 @@ namespace Core.CQRS.Decorators;
 /// </summary>
 /// <typeparam name="TQuery">The type of query being handled.</typeparam>
 /// <typeparam name="TResponse">The type of the query result.</typeparam>
+/// <example>
+/// Register the handler with validation in the DI container:
+/// <code>
+/// services.AddValidator&lt;GetUserByIdQuery, GetUserByIdQueryValidator&gt;();
+/// services.AddQueryHandlerWithValidation&lt;GetUserByIdQuery, UserResponse, GetUserByIdQueryHandler&gt;();
+/// </code>
+/// </example>
 /// <seealso cref="IQueryHandler{TQuery, TResponse}"/>
 public sealed class ValidationQueryHandler<TQuery, TResponse> : IQueryHandler<TQuery, TResponse>
     where TQuery : IQuery<TResponse>
@@ -37,30 +44,32 @@ public sealed class ValidationQueryHandler<TQuery, TResponse> : IQueryHandler<TQ
     /// <inheritdoc />
     public async Task<TResponse> Handle(TQuery query, CancellationToken cancellationToken)
     {
-        if (validators.Any())
+        if (!validators.Any())
         {
-            var failures = new List<ValidationFailure>();
+            return await inner.Handle(query, cancellationToken).ConfigureAwait(false);
+        }
 
-            foreach (var validator in validators)
+        var failures = new List<ValidationFailure>();
+
+        foreach (var validator in validators)
+        {
+            var results = await validator.ValidateAsync(query, cancellationToken).ConfigureAwait(false);
+
+            if (results is { Count: > 0 })
             {
-                var results = await validator.ValidateAsync(query, cancellationToken).ConfigureAwait(false);
-
-                if (results is { Count: > 0 })
-                {
-                    failures.AddRange(results);
-                }
-            }
-
-            if (failures is { Count: > 0 })
-            {
-                var queryName = typeof(TQuery).Name;
-                Log.ValidationFailed(logger, queryName, failures.Count);
-
-                throw new ValidationException(failures);
+                failures.AddRange(results);
             }
         }
 
-        return await inner.Handle(query, cancellationToken).ConfigureAwait(false);
+        if (failures is not { Count: > 0 })
+        {
+            return await inner.Handle(query, cancellationToken).ConfigureAwait(false);
+        }
+
+        var queryName = typeof(TQuery).Name;
+        Log.ValidationFailed(logger, queryName, failures.Count);
+
+        throw new ValidationException(failures);
+
     }
 }
-
