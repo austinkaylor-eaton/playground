@@ -32,4 +32,6 @@ public abstract class Entity<TIdentifier> : IEquatable<Entity<TIdentifier>>
 
     public static bool operator !=(Entity<TIdentifier>? left, Entity<TIdentifier>? right) =>
         !Equals(left, right);
+
+    public override string ToString() => $"{GetType().Name} [Id={Id}]";
 }
