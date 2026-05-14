@@ -5,8 +5,13 @@
 /// </summary>
 public interface IDomainEvent
 {
-        /// <summary>
-        /// The date and time when the domain event occurred.
-        /// </summary>
-        DateTimeOffset OccurredOn { get; }
+    /// <summary>
+    /// Unique identifier for idempotent event processing.
+    /// </summary>
+    Guid EventId { get; }
+
+    /// <summary>
+    /// The date and time when the domain event occurred.
+    /// </summary>
+    DateTimeOffset OccurredOn { get; }
 }
