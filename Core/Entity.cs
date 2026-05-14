@@ -7,6 +7,16 @@ namespace Core;
 /// Base domain entity with a typed identifier.
 /// </summary>
 /// <typeparam name="TIdentifier">The type of the entity's identifier.</typeparam>
+/// <remarks>
+/// <para>
+/// All domain entities should inherit from this class to gain identity-based equality semantics.
+/// Two entities are considered equal if they share the same runtime type and <see cref="Id"/> value.
+/// </para>
+/// <para>
+/// Derived classes must set the <see cref="Id"/> property via the <c>protected init</c> accessor,
+/// typically through a constructor or object initializer.
+/// </para>
+/// </remarks>
 /// <example>
 /// Define a domain entity with a <see cref="Guid"/> identifier:
 /// <code>
@@ -15,36 +25,21 @@ namespace Core;
 ///     public string CustomerName { get; init; } = string.Empty;
 ///     public decimal Total { get; init; }
 ///
-///     public static Order Create(string customerName, decimal total) =>
+///     public static Order Create(string customerName, decimal total) =&gt;
 ///         new() { Id = Guid.NewGuid(), CustomerName = customerName, Total = total };
 /// }
 /// </code>
 /// </example>
 /// <example>
-/// Use a strongly-typed identifier with <see cref="IEntityId{T}"/>:
+/// Use a strongly-typed identifier:
 /// <code>
 /// public readonly record struct OrderId(Guid Value) : IEntityId&lt;Guid&gt;;
 ///
 /// public class Order : Entity&lt;OrderId&gt;
 /// {
-///     public string CustomerName { get; init; } = string.Empty;
-///
-///     public static Order Create(string customerName) =>
-///         new() { Id = new OrderId(Guid.NewGuid()), CustomerName = customerName };
+///     public static Order Create(string name) =&gt;
+///         new() { Id = new OrderId(Guid.NewGuid()) };
 /// }
-/// </code>
-/// </example>
-/// <example>
-/// Entity equality is based on type and identifier:
-/// <code>
-/// var order1 = Order.Create("Alice", 99.99m);
-/// var order2 = Order.Create("Bob", 50.00m);
-///
-/// // Same reference
-/// bool same = order1 == order1;    // true
-///
-/// // Different identifiers
-/// bool different = order1 == order2; // false
 /// </code>
 /// </example>
 [PublicAPI]
@@ -54,26 +49,59 @@ public abstract class Entity<TIdentifier> : IEquatable<Entity<TIdentifier>>
     where TIdentifier : notnull
 {
     /// <summary>
-    /// The unique identifier for this entity.
+    /// Gets the unique identifier for this entity.
     /// </summary>
+    /// <value>
+    /// The typed identifier that uniquely distinguishes this entity within its aggregate or bounded context.
+    /// </value>
     /// <remarks>
-    /// Must be set by derived classes, typically via constructor or initializer.
+    /// Must be set by derived classes, typically via constructor or object initializer.
     /// </remarks>
     public TIdentifier Id { get; protected init; } = default!;
 
+    /// <summary>
+    /// Determines whether the specified object is equal to the current entity.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current entity.</param>
+    /// <returns><c>true</c> if <paramref name="obj"/> is an <see cref="Entity{TIdentifier}"/> of the same runtime type with an equal <see cref="Id"/>; otherwise, <c>false</c>.</returns>
     public override bool Equals(object? obj) =>
         obj is Entity<TIdentifier> other && Equals(other);
 
+    /// <summary>
+    /// Determines whether the specified entity is equal to the current entity.
+    /// </summary>
+    /// <param name="other">The entity to compare with the current entity.</param>
+    /// <returns><c>true</c> if <paramref name="other"/> is not <c>null</c>, shares the same runtime type, and has an equal <see cref="Id"/>; otherwise, <c>false</c>.</returns>
     public bool Equals(Entity<TIdentifier>? other) =>
         other is not null && GetType() == other.GetType() && Id.Equals(other.Id);
 
+    /// <summary>
+    /// Returns a hash code based on the entity's runtime type and <see cref="Id"/>.
+    /// </summary>
+    /// <returns>A 32-bit signed integer hash code.</returns>
     public override int GetHashCode() => HashCode.Combine(GetType(), Id);
 
+    /// <summary>
+    /// Determines whether two <see cref="Entity{TIdentifier}"/> instances are equal.
+    /// </summary>
+    /// <param name="left">The left-hand entity.</param>
+    /// <param name="right">The right-hand entity.</param>
+    /// <returns><c>true</c> if both entities are equal or both are <c>null</c>; otherwise, <c>false</c>.</returns>
     public static bool operator ==(Entity<TIdentifier>? left, Entity<TIdentifier>? right) =>
         Equals(left, right);
 
+    /// <summary>
+    /// Determines whether two <see cref="Entity{TIdentifier}"/> instances are not equal.
+    /// </summary>
+    /// <param name="left">The left-hand entity.</param>
+    /// <param name="right">The right-hand entity.</param>
+    /// <returns><c>true</c> if the entities are not equal; otherwise, <c>false</c>.</returns>
     public static bool operator !=(Entity<TIdentifier>? left, Entity<TIdentifier>? right) =>
         !Equals(left, right);
 
+    /// <summary>
+    /// Returns a string representation of the entity including its type name and <see cref="Id"/>.
+    /// </summary>
+    /// <returns>A string in the format <c>TypeName [Id=value]</c>.</returns>
     public override string ToString() => $"{GetType().Name} [Id={Id}]";
 }
