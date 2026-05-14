@@ -5,6 +5,19 @@
 /// </summary>
 /// <typeparam name="TQuery">The type of the query to handle.</typeparam>
 /// <typeparam name="TResponse">The type of the result returned by the query.</typeparam>
+/// <example>
+/// <code>
+/// public sealed record GetUserByIdQuery(Guid UserId) : IQuery&lt;UserResponse&gt;;
+///
+/// public sealed class GetUserByIdQueryHandler : IQueryHandler&lt;GetUserByIdQuery, UserResponse&gt;
+/// {
+///     public async Task&lt;UserResponse&gt; Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
+///     {
+///         // Retrieve user from data store
+///     }
+/// }
+/// </code>
+/// </example>
 /// <seealso cref="IQuery{TResponse}"/>
 /// <seealso href="https://www.milanjovanovic.tech/blog/cqrs-pattern-the-way-it-should-have-been-from-the-start">CQRS Pattern - Milan Jovanović</seealso>
 public interface IQueryHandler<in TQuery, TResponse>

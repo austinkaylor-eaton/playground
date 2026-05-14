@@ -4,6 +4,17 @@
 /// Defines a handler for a command that does not return a value.
 /// </summary>
 /// <typeparam name="TCommand">The type of the command to handle.</typeparam>
+/// <example>
+/// <code>
+/// public sealed class DeleteUserCommandHandler : ICommandHandler&lt;DeleteUserCommand&gt;
+/// {
+///     public async Task Handle(DeleteUserCommand command, CancellationToken cancellationToken)
+///     {
+///         // Delete user from data store
+///     }
+/// }
+/// </code>
+/// </example>
 /// <seealso cref="ICommand"/>
 /// <seealso href="https://www.milanjovanovic.tech/blog/cqrs-pattern-the-way-it-should-have-been-from-the-start">CQRS Pattern - Milan Jovanović</seealso>
 public interface ICommandHandler<in TCommand>
@@ -23,6 +34,17 @@ public interface ICommandHandler<in TCommand>
 /// </summary>
 /// <typeparam name="TCommand">The type of the command to handle.</typeparam>
 /// <typeparam name="TResponse">The type of the result returned by the command.</typeparam>
+/// <example>
+/// <code>
+/// public sealed class CreateUserCommandHandler : ICommandHandler&lt;CreateUserCommand, Guid&gt;
+/// {
+///     public async Task&lt;Guid&gt; Handle(CreateUserCommand command, CancellationToken cancellationToken)
+///     {
+///         // Create user and return the new user ID
+///     }
+/// }
+/// </code>
+/// </example>
 /// <seealso cref="ICommand{TResponse}"/>
 /// <seealso href="https://www.milanjovanovic.tech/blog/cqrs-pattern-the-way-it-should-have-been-from-the-start">CQRS Pattern - Milan Jovanović</seealso>
 public interface ICommandHandler<in TCommand, TResponse>
