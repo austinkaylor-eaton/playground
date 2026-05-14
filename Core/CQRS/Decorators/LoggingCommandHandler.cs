@@ -13,8 +13,8 @@ namespace Core.CQRS.Decorators;
 public sealed class LoggingCommandHandler<TCommand> : ICommandHandler<TCommand>
     where TCommand : ICommand
 {
-    private readonly ICommandHandler<TCommand> inner;
-    private readonly ILogger<LoggingCommandHandler<TCommand>> logger;
+    private readonly ICommandHandler<TCommand> _inner;
+    private readonly ILogger<LoggingCommandHandler<TCommand>> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LoggingCommandHandler{TCommand}"/> class.
@@ -25,8 +25,8 @@ public sealed class LoggingCommandHandler<TCommand> : ICommandHandler<TCommand>
         ICommandHandler<TCommand> inner,
         ILogger<LoggingCommandHandler<TCommand>> logger)
     {
-        this.inner = inner;
-        this.logger = logger;
+        _inner = inner;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -36,20 +36,20 @@ public sealed class LoggingCommandHandler<TCommand> : ICommandHandler<TCommand>
     {
         var commandName = typeof(TCommand).Name;
 
-        Log.HandlingCommand(logger, commandName);
+        Log.HandlingCommand(_logger, commandName);
         var startTime = Stopwatch.GetTimestamp();
 
         try
         {
-            await inner.Handle(command, cancellationToken).ConfigureAwait(false);
+            await _inner.Handle(command, cancellationToken).ConfigureAwait(false);
 
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            Log.HandledCommand(logger, commandName, elapsed.TotalMilliseconds);
+            Log.HandledCommand(_logger, commandName, elapsed.TotalMilliseconds);
         }
         catch (Exception ex)
         {
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            Log.CommandFailed(logger, ex, commandName, elapsed.TotalMilliseconds);
+            Log.CommandFailed(_logger, ex, commandName, elapsed.TotalMilliseconds);
 
             throw;
         }

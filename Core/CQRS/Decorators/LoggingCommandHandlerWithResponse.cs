@@ -15,8 +15,8 @@ public sealed class LoggingCommandHandlerWithResponse<TCommand, TResponse>
     : ICommandHandler<TCommand, TResponse>
     where TCommand : ICommand<TResponse>
 {
-    private readonly ICommandHandler<TCommand, TResponse> inner;
-    private readonly ILogger<LoggingCommandHandlerWithResponse<TCommand, TResponse>> logger;
+    private readonly ICommandHandler<TCommand, TResponse> _inner;
+    private readonly ILogger<LoggingCommandHandlerWithResponse<TCommand, TResponse>> _logger;
 
     /// <summary>
     /// Initializes a new instance of the
@@ -28,8 +28,8 @@ public sealed class LoggingCommandHandlerWithResponse<TCommand, TResponse>
         ICommandHandler<TCommand, TResponse> inner,
         ILogger<LoggingCommandHandlerWithResponse<TCommand, TResponse>> logger)
     {
-        this.inner = inner;
-        this.logger = logger;
+        _inner = inner;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -39,22 +39,22 @@ public sealed class LoggingCommandHandlerWithResponse<TCommand, TResponse>
     {
         var commandName = typeof(TCommand).Name;
 
-        Log.HandlingCommand(logger, commandName);
+        Log.HandlingCommand(_logger, commandName);
         var startTime = Stopwatch.GetTimestamp();
 
         try
         {
-            var result = await inner.Handle(command, cancellationToken).ConfigureAwait(false);
+            var result = await _inner.Handle(command, cancellationToken).ConfigureAwait(false);
 
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            Log.HandledCommand(logger, commandName, elapsed.TotalMilliseconds);
+            Log.HandledCommand(_logger, commandName, elapsed.TotalMilliseconds);
 
             return result;
         }
         catch (Exception ex)
         {
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            Log.CommandFailed(logger, ex, commandName, elapsed.TotalMilliseconds);
+            Log.CommandFailed(_logger, ex, commandName, elapsed.TotalMilliseconds);
 
             throw;
         }

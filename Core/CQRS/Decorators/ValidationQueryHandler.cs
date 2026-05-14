@@ -21,9 +21,9 @@ namespace Core.CQRS.Decorators;
 public sealed class ValidationQueryHandler<TQuery, TResponse> : IQueryHandler<TQuery, TResponse>
     where TQuery : IQuery<TResponse>
 {
-    private readonly IQueryHandler<TQuery, TResponse> inner;
-    private readonly IEnumerable<IValidator<TQuery>> validators;
-    private readonly ILogger<ValidationQueryHandler<TQuery, TResponse>> logger;
+    private readonly IQueryHandler<TQuery, TResponse> _inner;
+    private readonly IEnumerable<IValidator<TQuery>> _validators;
+    private readonly ILogger<ValidationQueryHandler<TQuery, TResponse>> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ValidationQueryHandler{TQuery, TResponse}"/> class.
@@ -36,22 +36,22 @@ public sealed class ValidationQueryHandler<TQuery, TResponse> : IQueryHandler<TQ
         IEnumerable<IValidator<TQuery>> validators,
         ILogger<ValidationQueryHandler<TQuery, TResponse>> logger)
     {
-        this.inner = inner;
-        this.validators = validators;
-        this.logger = logger;
+        _inner = inner;
+        _validators = validators;
+        _logger = logger;
     }
 
     /// <inheritdoc />
     public async Task<TResponse> Handle(TQuery query, CancellationToken cancellationToken)
     {
-        if (!validators.Any())
+        if (!_validators.Any())
         {
-            return await inner.Handle(query, cancellationToken).ConfigureAwait(false);
+            return await _inner.Handle(query, cancellationToken).ConfigureAwait(false);
         }
 
         var failures = new List<ValidationFailure>();
 
-        foreach (var validator in validators)
+        foreach (var validator in _validators)
         {
             var results = await validator.ValidateAsync(query, cancellationToken).ConfigureAwait(false);
 
@@ -63,11 +63,11 @@ public sealed class ValidationQueryHandler<TQuery, TResponse> : IQueryHandler<TQ
 
         if (failures is not { Count: > 0 })
         {
-            return await inner.Handle(query, cancellationToken).ConfigureAwait(false);
+            return await _inner.Handle(query, cancellationToken).ConfigureAwait(false);
         }
 
         var queryName = typeof(TQuery).Name;
-        Log.ValidationFailed(logger, queryName, failures.Count);
+        Log.ValidationFailed(_logger, queryName, failures.Count);
 
         throw new ValidationException(failures);
 

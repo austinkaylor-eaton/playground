@@ -14,8 +14,8 @@ namespace Core.CQRS.Decorators;
 public sealed class LoggingQueryHandler<TQuery, TResponse> : IQueryHandler<TQuery, TResponse>
     where TQuery : IQuery<TResponse>
 {
-    private readonly IQueryHandler<TQuery, TResponse> inner;
-    private readonly ILogger<LoggingQueryHandler<TQuery, TResponse>> logger;
+    private readonly IQueryHandler<TQuery, TResponse> _inner;
+    private readonly ILogger<LoggingQueryHandler<TQuery, TResponse>> _logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LoggingQueryHandler{TQuery, TResponse}"/> class.
@@ -26,8 +26,8 @@ public sealed class LoggingQueryHandler<TQuery, TResponse> : IQueryHandler<TQuer
         IQueryHandler<TQuery, TResponse> inner,
         ILogger<LoggingQueryHandler<TQuery, TResponse>> logger)
     {
-        this.inner = inner;
-        this.logger = logger;
+        _inner = inner;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -37,22 +37,22 @@ public sealed class LoggingQueryHandler<TQuery, TResponse> : IQueryHandler<TQuer
     {
         var queryName = typeof(TQuery).Name;
 
-        Log.HandlingQuery(logger, queryName);
+        Log.HandlingQuery(_logger, queryName);
         var startTime = Stopwatch.GetTimestamp();
 
         try
         {
-            var result = await inner.Handle(query, cancellationToken).ConfigureAwait(false);
+            var result = await _inner.Handle(query, cancellationToken).ConfigureAwait(false);
 
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            Log.HandledQuery(logger, queryName, elapsed.TotalMilliseconds);
+            Log.HandledQuery(_logger, queryName, elapsed.TotalMilliseconds);
 
             return result;
         }
         catch (Exception ex)
         {
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            Log.QueryFailed(logger, ex, queryName, elapsed.TotalMilliseconds);
+            Log.QueryFailed(_logger, ex, queryName, elapsed.TotalMilliseconds);
 
             throw;
         }
