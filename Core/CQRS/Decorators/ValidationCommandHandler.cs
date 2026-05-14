@@ -64,7 +64,7 @@ public sealed class ValidationCommandHandler<TCommand> : ICommandHandler<TComman
         if (failures is { Count: > 0 })
         {
             var commandName = typeof(TCommand).Name;
-            Log.ValidationFailed(logger, commandName, failures.Count);
+            CQRS.Log.ValidationFailed(logger, commandName, failures.Count);
 
             throw new ValidationException(failures);
         }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Core.CQRS.Decorators;
+namespace Core.CQRS;
 
 /// <summary>
 /// High-performance log message definitions for CQRS decorator logging.

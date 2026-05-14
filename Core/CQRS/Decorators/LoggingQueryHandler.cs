@@ -37,7 +37,7 @@ public sealed class LoggingQueryHandler<TQuery, TResponse> : IQueryHandler<TQuer
     {
         var queryName = typeof(TQuery).Name;
 
-        Log.HandlingQuery(_logger, queryName);
+        CQRS.Log.HandlingQuery(_logger, queryName);
         var startTime = Stopwatch.GetTimestamp();
 
         try
@@ -45,14 +45,14 @@ public sealed class LoggingQueryHandler<TQuery, TResponse> : IQueryHandler<TQuer
             var result = await _inner.Handle(query, cancellationToken).ConfigureAwait(false);
 
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            Log.HandledQuery(_logger, queryName, elapsed.TotalMilliseconds);
+            CQRS.Log.HandledQuery(_logger, queryName, elapsed.TotalMilliseconds);
 
             return result;
         }
         catch (Exception ex)
         {
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            Log.QueryFailed(_logger, ex, queryName, elapsed.TotalMilliseconds);
+            CQRS.Log.QueryFailed(_logger, ex, queryName, elapsed.TotalMilliseconds);
 
             throw;
         }
