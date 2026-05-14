@@ -1,7 +1,7 @@
 ﻿using Core.Validation;
 using Microsoft.Extensions.Logging;
 
-namespace Core.CQRS.Decorators;
+namespace Core.CQRS.Decorators.Validation;
 
 /// <summary>
 /// Validation decorator for command handlers that do not return a value.
