@@ -10,6 +10,19 @@
 /// to enforce tenant boundaries.
 /// </para>
 /// </remarks>
+/// <example>
+/// Implement tenant isolation on a domain entity:
+/// <code>
+/// public class Project : Entity&lt;Guid&gt;, ITenantEntity
+/// {
+///     public Guid TenantId { get; private init; }
+///     public string Name { get; init; } = string.Empty;
+///
+///     public static Project Create(Guid tenantId, string name) =&gt;
+///         new() { Id = Guid.NewGuid(), TenantId = tenantId, Name = name };
+/// }
+/// </code>
+/// </example>
 /// <seealso cref="Entity{TIdentifier}"/>
 public interface ITenantEntity
 {
