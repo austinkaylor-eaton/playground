@@ -29,6 +29,11 @@ public readonly record struct Result<T>
     /// <param name="error">The error message if the operation failed.</param>
     internal Result(T? value, string? error)
     {
+        if (value is not null && error is not null)
+        {
+            throw new InvalidOperationException("A result cannot have both a value and an error.");
+        }
+
         Value = value;
         Error = error;
     }
@@ -45,7 +50,10 @@ public static class Result
     /// <typeparam name="T">The type of the successful result value.</typeparam>
     /// <param name="value">The successful result value.</param>
     /// <returns>A <see cref="Result{T}"/> representing a successful operation.</returns>
-    public static Result<T> Success<T>(T value) => new(value, null);
+    public static Result<T> Success<T>(T value) =>
+        value is null
+            ? throw new ArgumentNullException(nameof(value), "A successful result must have a non-null value.")
+            : new Result<T>(value, null);
 
     /// <summary>
     /// Creates a failed result with the given error message.
@@ -53,5 +61,8 @@ public static class Result
     /// <typeparam name="T">The type of the expected result value.</typeparam>
     /// <param name="error">The error message.</param>
     /// <returns>A <see cref="Result{T}"/> representing a failed operation.</returns>
-    public static Result<T> Failure<T>(string error) => new(default, error);
+    public static Result<T> Failure<T>(string error) =>
+        string.IsNullOrWhiteSpace(error)
+            ? throw new ArgumentException("Error message must not be null or empty.", nameof(error))
+            : new Result<T>(default, error);
 }
