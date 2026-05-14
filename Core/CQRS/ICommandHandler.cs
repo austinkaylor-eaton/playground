@@ -5,6 +5,7 @@
 /// </summary>
 /// <typeparam name="TCommand">The type of the command to handle.</typeparam>
 /// <seealso cref="ICommand"/>
+/// <seealso href="https://www.milanjovanovic.tech/blog/cqrs-pattern-the-way-it-should-have-been-from-the-start">CQRS Pattern - Milan Jovanović</seealso>
 public interface ICommandHandler<in TCommand>
     where TCommand : ICommand
 {
@@ -23,6 +24,7 @@ public interface ICommandHandler<in TCommand>
 /// <typeparam name="TCommand">The type of the command to handle.</typeparam>
 /// <typeparam name="TResponse">The type of the result returned by the command.</typeparam>
 /// <seealso cref="ICommand{TResponse}"/>
+/// <seealso href="https://www.milanjovanovic.tech/blog/cqrs-pattern-the-way-it-should-have-been-from-the-start">CQRS Pattern - Milan Jovanović</seealso>
 public interface ICommandHandler<in TCommand, TResponse>
     where TCommand : ICommand<TResponse>
 {

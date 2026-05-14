@@ -6,6 +6,7 @@
 /// <typeparam name="TQuery">The type of the query to handle.</typeparam>
 /// <typeparam name="TResponse">The type of the result returned by the query.</typeparam>
 /// <seealso cref="IQuery{TResponse}"/>
+/// <seealso href="https://www.milanjovanovic.tech/blog/cqrs-pattern-the-way-it-should-have-been-from-the-start">CQRS Pattern - Milan Jovanović</seealso>
 public interface IQueryHandler<in TQuery, TResponse>
     where TQuery : IQuery<TResponse>
 {
