@@ -24,4 +24,14 @@ public interface IAuditEntity
     /// The identifier of the user who last modified the entity.
     /// </summary>
     string? LastModifiedBy { get; }
+
+    /// <summary>
+    /// Sets creation audit fields. Should only be called once.
+    /// </summary>
+    void SetCreatedAt(DateTimeOffset at, string? by);
+
+    /// <summary>
+    /// Updates modification audit fields.
+    /// </summary>
+    void SetLastModifiedBy(DateTimeOffset at, string? by);
 }
