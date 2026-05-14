@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 
 namespace Core;
 
@@ -6,6 +7,7 @@ namespace Core;
 /// Base domain entity with a typed identifier.
 /// </summary>
 /// <typeparam name="TIdentifier">The type of the entity's identifier.</typeparam>
+[PublicAPI]
 [SuppressMessage("Major Code Smell", "S4035",
     Justification = "Equality includes runtime type check, safe for inheritance")]
 public abstract class Entity<TIdentifier> : IEquatable<Entity<TIdentifier>>
