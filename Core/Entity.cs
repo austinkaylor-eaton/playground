@@ -7,6 +7,46 @@ namespace Core;
 /// Base domain entity with a typed identifier.
 /// </summary>
 /// <typeparam name="TIdentifier">The type of the entity's identifier.</typeparam>
+/// <example>
+/// Define a domain entity with a <see cref="Guid"/> identifier:
+/// <code>
+/// public class Order : Entity&lt;Guid&gt;
+/// {
+///     public string CustomerName { get; init; } = string.Empty;
+///     public decimal Total { get; init; }
+///
+///     public static Order Create(string customerName, decimal total) =>
+///         new() { Id = Guid.NewGuid(), CustomerName = customerName, Total = total };
+/// }
+/// </code>
+/// </example>
+/// <example>
+/// Use a strongly-typed identifier with <see cref="IEntityId{T}"/>:
+/// <code>
+/// public readonly record struct OrderId(Guid Value) : IEntityId&lt;Guid&gt;;
+///
+/// public class Order : Entity&lt;OrderId&gt;
+/// {
+///     public string CustomerName { get; init; } = string.Empty;
+///
+///     public static Order Create(string customerName) =>
+///         new() { Id = new OrderId(Guid.NewGuid()), CustomerName = customerName };
+/// }
+/// </code>
+/// </example>
+/// <example>
+/// Entity equality is based on type and identifier:
+/// <code>
+/// var order1 = Order.Create("Alice", 99.99m);
+/// var order2 = Order.Create("Bob", 50.00m);
+///
+/// // Same reference
+/// bool same = order1 == order1;    // true
+///
+/// // Different identifiers
+/// bool different = order1 == order2; // false
+/// </code>
+/// </example>
 [PublicAPI]
 [SuppressMessage("Major Code Smell", "S4035",
     Justification = "Equality includes runtime type check, safe for inheritance")]
