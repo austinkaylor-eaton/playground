@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 
 namespace Core;
 
@@ -47,7 +48,8 @@ public readonly record struct Result<T>
 /// Factory methods for creating <see cref="Result{T}"/> instances.
 /// </summary>
 [PublicAPI]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1034: Nested types should not be visible", Justification = "Extension members are part of C# 14+ https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods")]
+[SuppressMessage("Design", "CA1034: Nested types should not be visible", Justification = "Extension members are part of C# 14+ https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods")]
+[SuppressMessage("ReSharper", "NullableWarningSuppressionIsUsed")]
 public static class Result
 {
     /// <summary>
