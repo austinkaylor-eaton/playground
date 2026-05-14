@@ -8,5 +8,5 @@ public interface IVersionedEntity
     /// <summary>
     /// The concurrency token used for optimistic locking.
     /// </summary>
-    byte[] RowVersion { get; }
+    ReadOnlyMemory<byte> RowVersion { get; }
 }
