@@ -61,4 +61,13 @@ internal static partial class Log
     /// <param name="elapsedMs">The elapsed time in milliseconds before the failure.</param>
     [LoggerMessage(Level = LogLevel.Error, Message = "Query {QueryName} failed after {ElapsedMs}ms")]
     internal static partial void QueryFailed(ILogger logger, Exception ex, string queryName, double elapsedMs);
+
+    /// <summary>
+    /// Logs that validation failed for a command or query, including the number of errors.
+    /// </summary>
+    /// <param name="logger">The logger instance.</param>
+    /// <param name="name">The name of the command or query type.</param>
+    /// <param name="errorCount">The number of validation errors.</param>
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Validation failed for {Name} with {ErrorCount} error(s)")]
+    internal static partial void ValidationFailed(ILogger logger, string name, int errorCount);
 }
