@@ -11,7 +11,7 @@ namespace Core.CQRS.Decorators;
 /// <typeparam name="TQuery">The type of query being handled.</typeparam>
 /// <typeparam name="TResponse">The type of the query result.</typeparam>
 /// <seealso cref="IQueryHandler{TQuery, TResponse}"/>
-public sealed partial class LoggingQueryHandler<TQuery, TResponse> : IQueryHandler<TQuery, TResponse>
+public sealed class LoggingQueryHandler<TQuery, TResponse> : IQueryHandler<TQuery, TResponse>
     where TQuery : IQuery<TResponse>
 {
     private readonly IQueryHandler<TQuery, TResponse> inner;
@@ -37,7 +37,7 @@ public sealed partial class LoggingQueryHandler<TQuery, TResponse> : IQueryHandl
     {
         var queryName = typeof(TQuery).Name;
 
-        LogHandlingQuery(logger, queryName);
+        Log.HandlingQuery(logger, queryName);
         var startTime = Stopwatch.GetTimestamp();
 
         try
@@ -45,27 +45,18 @@ public sealed partial class LoggingQueryHandler<TQuery, TResponse> : IQueryHandl
             var result = await inner.Handle(query, cancellationToken).ConfigureAwait(false);
 
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            LogHandledQuery(logger, queryName, elapsed.TotalMilliseconds);
+            Log.HandledQuery(logger, queryName, elapsed.TotalMilliseconds);
 
             return result;
         }
         catch (Exception ex)
         {
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            LogQueryFailed(logger, ex, queryName, elapsed.TotalMilliseconds);
+            Log.QueryFailed(logger, ex, queryName, elapsed.TotalMilliseconds);
 
             throw;
         }
     }
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Handling query {QueryName}")]
-    private static partial void LogHandlingQuery(ILogger logger, string queryName);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Handled query {QueryName} in {ElapsedMs}ms")]
-    private static partial void LogHandledQuery(ILogger logger, string queryName, double elapsedMs);
-
-    [LoggerMessage(Level = LogLevel.Error, Message = "Query {QueryName} failed after {ElapsedMs}ms")]
-    private static partial void LogQueryFailed(ILogger logger, Exception ex, string queryName, double elapsedMs);
 }
 
 

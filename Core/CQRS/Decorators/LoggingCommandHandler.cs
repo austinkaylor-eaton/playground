@@ -10,7 +10,7 @@ namespace Core.CQRS.Decorators;
 /// </summary>
 /// <typeparam name="TCommand">The type of command being handled.</typeparam>
 /// <seealso cref="ICommandHandler{TCommand}"/>
-public sealed partial class LoggingCommandHandler<TCommand> : ICommandHandler<TCommand>
+public sealed class LoggingCommandHandler<TCommand> : ICommandHandler<TCommand>
     where TCommand : ICommand
 {
     private readonly ICommandHandler<TCommand> inner;
@@ -36,7 +36,7 @@ public sealed partial class LoggingCommandHandler<TCommand> : ICommandHandler<TC
     {
         var commandName = typeof(TCommand).Name;
 
-        LogHandlingCommand(logger, commandName);
+        Log.HandlingCommand(logger, commandName);
         var startTime = Stopwatch.GetTimestamp();
 
         try
@@ -44,25 +44,16 @@ public sealed partial class LoggingCommandHandler<TCommand> : ICommandHandler<TC
             await inner.Handle(command, cancellationToken).ConfigureAwait(false);
 
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            LogHandledCommand(logger, commandName, elapsed.TotalMilliseconds);
+            Log.HandledCommand(logger, commandName, elapsed.TotalMilliseconds);
         }
         catch (Exception ex)
         {
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            LogCommandFailed(logger, ex, commandName, elapsed.TotalMilliseconds);
+            Log.CommandFailed(logger, ex, commandName, elapsed.TotalMilliseconds);
 
             throw;
         }
     }
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Handling command {CommandName}")]
-    private static partial void LogHandlingCommand(ILogger logger, string commandName);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Handled command {CommandName} in {ElapsedMs}ms")]
-    private static partial void LogHandledCommand(ILogger logger, string commandName, double elapsedMs);
-
-    [LoggerMessage(Level = LogLevel.Error, Message = "Command {CommandName} failed after {ElapsedMs}ms")]
-    private static partial void LogCommandFailed(ILogger logger, Exception ex, string commandName, double elapsedMs);
 }
 
 
