@@ -1,9 +1,12 @@
-﻿namespace Core;
+﻿using JetBrains.Annotations;
+
+namespace Core;
 
 /// <summary>
 /// Represents the result of an operation, encapsulating either a successful value or an error message.
 /// </summary>
 /// <typeparam name="T">The type of the successful result value.</typeparam>
+[PublicAPI]
 public readonly record struct Result<T>
 {
     /// <summary>
@@ -42,6 +45,7 @@ public readonly record struct Result<T>
 /// <summary>
 /// Factory methods for creating <see cref="Result{T}"/> instances.
 /// </summary>
+[PublicAPI]
 public static class Result
 {
     /// <summary>
