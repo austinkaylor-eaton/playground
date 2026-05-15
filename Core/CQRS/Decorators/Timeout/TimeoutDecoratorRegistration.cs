@@ -9,34 +9,6 @@ namespace Core.CQRS.Decorators.Timeout;
 public static class TimeoutDecoratorRegistration
 {
     /// <summary>
-    /// Registers a <see cref="ICommandHandler{TCommand}"/> with timeout decoration.
-    /// </summary>
-    /// <typeparam name="TCommand">The command type.</typeparam>
-    /// <typeparam name="THandler">The concrete handler type.</typeparam>
-    /// <param name="services">The service collection.</param>
-    /// <returns>The service collection for chaining.</returns>
-    /// <example>
-    /// <code>
-    /// [Timeout(timeoutMs: 5000)]
-    /// public sealed record SendEmailCommand(string To) : ICommand;
-    ///
-    /// services.AddCommandHandlerWithTimeout&lt;SendEmailCommand, SendEmailCommandHandler&gt;();
-    /// </code>
-    /// </example>
-    public static IServiceCollection AddCommandHandlerWithTimeout<TCommand, THandler>(
-        this IServiceCollection services)
-        where TCommand : ICommand
-        where THandler : class, ICommandHandler<TCommand>
-    {
-        services.AddScoped<THandler>();
-        services.AddScoped<ICommandHandler<TCommand>>(sp =>
-            new TimeoutCommandHandler<TCommand>(
-                sp.GetRequiredService<THandler>()));
-
-        return services;
-    }
-
-    /// <summary>
     /// Registers a <see cref="ICommandHandler{TCommand, TResponse}"/> with timeout decoration.
     /// </summary>
     /// <typeparam name="TCommand">The command type.</typeparam>
@@ -59,7 +31,7 @@ public static class TimeoutDecoratorRegistration
     {
         services.AddScoped<THandler>();
         services.AddScoped<ICommandHandler<TCommand, TResponse>>(sp =>
-            new TimeoutCommandHandlerWithResponse<TCommand, TResponse>(
+            new TimeoutCommandHandler<TCommand, TResponse>(
                 sp.GetRequiredService<THandler>()));
 
         return services;

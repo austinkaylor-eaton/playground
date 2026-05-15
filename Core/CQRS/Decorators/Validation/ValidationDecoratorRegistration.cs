@@ -11,38 +11,6 @@ namespace Core.CQRS.Decorators.Validation;
 public static class ValidationDecoratorRegistration
 {
     /// <summary>
-    /// Registers a <see cref="ICommandHandler{TCommand}"/> with validation decoration.
-    /// </summary>
-    /// <typeparam name="TCommand">The command type.</typeparam>
-    /// <typeparam name="THandler">The concrete handler type.</typeparam>
-    /// <param name="services">The service collection.</param>
-    /// <returns>The service collection for chaining.</returns>
-    /// <example>
-    /// <code>
-    /// // Register the validator and handler together:
-    /// services.AddValidator&lt;DeleteUserCommand, DeleteUserCommandValidator&gt;();
-    /// services.AddCommandHandlerWithValidation&lt;DeleteUserCommand, DeleteUserCommandHandler&gt;();
-    ///
-    /// // The validator runs before the handler. If validation fails,
-    /// // a ValidationException is thrown and the handler is never invoked.
-    /// </code>
-    /// </example>
-    public static IServiceCollection AddCommandHandlerWithValidation<TCommand, THandler>(
-        this IServiceCollection services)
-        where TCommand : ICommand
-        where THandler : class, ICommandHandler<TCommand>
-    {
-        services.AddScoped<THandler>();
-        services.AddScoped<ICommandHandler<TCommand>>(sp =>
-            new ValidationCommandHandler<TCommand>(
-                sp.GetRequiredService<THandler>(),
-                sp.GetRequiredService<IEnumerable<IValidator<TCommand>>>(),
-                sp.GetRequiredService<ILogger<ValidationCommandHandler<TCommand>>>()));
-
-        return services;
-    }
-
-    /// <summary>
     /// Registers a <see cref="ICommandHandler{TCommand, TResponse}"/> with validation decoration.
     /// </summary>
     /// <typeparam name="TCommand">The command type.</typeparam>
@@ -52,13 +20,8 @@ public static class ValidationDecoratorRegistration
     /// <returns>The service collection for chaining.</returns>
     /// <example>
     /// <code>
-    /// // Register the validator and handler together:
     /// services.AddValidator&lt;CreateUserCommand, CreateUserCommandValidator&gt;();
     /// services.AddCommandHandlerWithValidation&lt;CreateUserCommand, Guid, CreateUserCommandHandler&gt;();
-    ///
-    /// // Multiple validators can be registered for the same command:
-    /// services.AddValidator&lt;CreateUserCommand, CreateUserEmailValidator&gt;();
-    /// services.AddValidator&lt;CreateUserCommand, CreateUserNameValidator&gt;();
     /// </code>
     /// </example>
     public static IServiceCollection AddCommandHandlerWithValidation<TCommand, TResponse, THandler>(
@@ -68,10 +31,10 @@ public static class ValidationDecoratorRegistration
     {
         services.AddScoped<THandler>();
         services.AddScoped<ICommandHandler<TCommand, TResponse>>(sp =>
-            new ValidationCommandHandlerWithResponse<TCommand, TResponse>(
+            new ValidationCommandHandler<TCommand, TResponse>(
                 sp.GetRequiredService<THandler>(),
                 sp.GetRequiredService<IEnumerable<IValidator<TCommand>>>(),
-                sp.GetRequiredService<ILogger<ValidationCommandHandlerWithResponse<TCommand, TResponse>>>()));
+                sp.GetRequiredService<ILogger<ValidationCommandHandler<TCommand, TResponse>>>()));
 
         return services;
     }
@@ -86,7 +49,6 @@ public static class ValidationDecoratorRegistration
     /// <returns>The service collection for chaining.</returns>
     /// <example>
     /// <code>
-    /// // Register the validator and handler together:
     /// services.AddValidator&lt;GetUserByIdQuery, GetUserByIdQueryValidator&gt;();
     /// services.AddQueryHandlerWithValidation&lt;GetUserByIdQuery, UserResponse, GetUserByIdQueryHandler&gt;();
     /// </code>
@@ -115,12 +77,7 @@ public static class ValidationDecoratorRegistration
     /// <returns>The service collection for chaining.</returns>
     /// <example>
     /// <code>
-    /// // Register a single validator:
     /// services.AddValidator&lt;CreateUserCommand, CreateUserCommandValidator&gt;();
-    ///
-    /// // Register multiple validators for the same type (all will be executed):
-    /// services.AddValidator&lt;CreateUserCommand, CreateUserEmailValidator&gt;();
-    /// services.AddValidator&lt;CreateUserCommand, CreateUserNameValidator&gt;();
     /// </code>
     /// </example>
     public static IServiceCollection AddValidator<T, TValidator>(

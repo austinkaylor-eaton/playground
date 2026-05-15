@@ -10,32 +10,6 @@ namespace Core.CQRS.Decorators.Logging;
 public static class LoggingDecoratorRegistration
 {
     /// <summary>
-    /// Registers a <see cref="ICommandHandler{TCommand}"/> with logging decoration.
-    /// </summary>
-    /// <typeparam name="TCommand">The command type.</typeparam>
-    /// <typeparam name="THandler">The concrete handler type.</typeparam>
-    /// <param name="services">The service collection.</param>
-    /// <returns>The service collection for chaining.</returns>
-    /// <example>
-    /// <code>
-    /// services.AddCommandHandlerWithLogging&lt;DeleteUserCommand, DeleteUserCommandHandler&gt;();
-    /// </code>
-    /// </example>
-    public static IServiceCollection AddCommandHandlerWithLogging<TCommand, THandler>(
-        this IServiceCollection services)
-        where TCommand : ICommand
-        where THandler : class, ICommandHandler<TCommand>
-    {
-        services.AddScoped<THandler>();
-        services.AddScoped<ICommandHandler<TCommand>>(sp =>
-            new LoggingCommandHandler<TCommand>(
-                sp.GetRequiredService<THandler>(),
-                sp.GetRequiredService<ILogger<LoggingCommandHandler<TCommand>>>()));
-
-        return services;
-    }
-
-    /// <summary>
     /// Registers a <see cref="ICommandHandler{TCommand, TResponse}"/> with logging decoration.
     /// </summary>
     /// <typeparam name="TCommand">The command type.</typeparam>
@@ -55,9 +29,9 @@ public static class LoggingDecoratorRegistration
     {
         services.AddScoped<THandler>();
         services.AddScoped<ICommandHandler<TCommand, TResponse>>(sp =>
-            new LoggingCommandHandlerWithResponse<TCommand, TResponse>(
+            new LoggingCommandHandler<TCommand, TResponse>(
                 sp.GetRequiredService<THandler>(),
-                sp.GetRequiredService<ILogger<LoggingCommandHandlerWithResponse<TCommand, TResponse>>>()));
+                sp.GetRequiredService<ILogger<LoggingCommandHandler<TCommand, TResponse>>>()));
 
         return services;
     }
@@ -89,4 +63,3 @@ public static class LoggingDecoratorRegistration
         return services;
     }
 }
-

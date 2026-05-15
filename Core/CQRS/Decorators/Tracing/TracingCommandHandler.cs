@@ -3,28 +3,29 @@
 namespace Core.CQRS.Decorators.Tracing;
 
 /// <summary>
-/// Tracing decorator for command handlers that do not return a value.
+/// Tracing decorator for command handlers that return a <typeparamref name="TResponse"/>.
 /// Starts an <see cref="Activity"/> span around the inner handler execution,
 /// recording the command name, type, and success/failure status.
 /// </summary>
 /// <typeparam name="TCommand">The type of command being handled.</typeparam>
+/// <typeparam name="TResponse">The type of the command result.</typeparam>
 /// <example>
 /// Register the handler with tracing in the DI container:
 /// <code>
-/// services.AddCommandHandlerWithTracing&lt;DeleteUserCommand, DeleteUserCommandHandler&gt;();
+/// services.AddCommandHandlerWithTracing&lt;CreateUserCommand, Guid, CreateUserCommandHandler&gt;();
 /// </code>
 /// </example>
-/// <seealso cref="ICommandHandler{TCommand}"/>
+/// <seealso cref="ICommandHandler{TCommand, TResponse}"/>
 /// <seealso cref="CqrsActivitySource"/>
 /// <remarks>
-/// Initializes a new instance of the <see cref="TracingCommandHandler{TCommand}"/> class.
+/// Initializes a new instance of the <see cref="TracingCommandHandler{TCommand, TResponse}"/> class.
 /// </remarks>
 /// <param name="inner">The inner command handler to decorate.</param>
-public sealed class TracingCommandHandler<TCommand>(ICommandHandler<TCommand> inner) :
-    ICommandHandler<TCommand> where TCommand : ICommand
+public sealed class TracingCommandHandler<TCommand, TResponse>(ICommandHandler<TCommand, TResponse> inner)
+    : ICommandHandler<TCommand, TResponse> where TCommand : ICommand<TResponse>
 {
     /// <inheritdoc />
-    public async Task Handle(TCommand command, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TCommand command, CancellationToken cancellationToken)
     {
         var commandName = typeof(TCommand).Name;
 
@@ -36,9 +37,11 @@ public sealed class TracingCommandHandler<TCommand>(ICommandHandler<TCommand> in
 
         try
         {
-            await inner.Handle(command, cancellationToken).ConfigureAwait(false);
+            var result = await inner.Handle(command, cancellationToken).ConfigureAwait(false);
 
             activity?.SetStatus(ActivityStatusCode.Ok);
+
+            return result;
         }
         catch (Exception ex)
         {
