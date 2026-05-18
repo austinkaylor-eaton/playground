@@ -22,7 +22,8 @@ namespace Core.CQRS.Decorators.Tracing;
 /// </remarks>
 /// <param name="inner">The inner query handler to decorate.</param>
 public sealed class TracingQueryHandler<TQuery, TResponse>(IQueryHandler<TQuery, TResponse> inner) :
-    IQueryHandler<TQuery, TResponse> where TQuery : IQuery<TResponse>
+    IQueryHandler<TQuery, TResponse>
+    where TQuery : IQuery<TResponse>
 {
     /// <inheritdoc />
     public async Task<TResponse> Handle(TQuery query, CancellationToken cancellationToken)

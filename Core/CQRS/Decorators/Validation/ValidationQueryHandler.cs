@@ -18,40 +18,30 @@ namespace Core.CQRS.Decorators.Validation;
 /// </code>
 /// </example>
 /// <seealso cref="IQueryHandler{TQuery, TResponse}"/>
-public sealed class ValidationQueryHandler<TQuery, TResponse> : IQueryHandler<TQuery, TResponse>
+/// <remarks>
+/// Initializes a new instance of the <see cref="ValidationQueryHandler{TQuery, TResponse}"/> class.
+/// </remarks>
+/// <param name="inner">The inner query handler to decorate.</param>
+/// <param name="validators">The validators for the query.</param>
+/// <param name="logger">The logger instance.</param>
+public sealed class ValidationQueryHandler<TQuery, TResponse>(
+    IQueryHandler<TQuery, TResponse> inner,
+    IEnumerable<IValidator<TQuery>> validators,
+    ILogger<ValidationQueryHandler<TQuery, TResponse>> logger) :
+    IQueryHandler<TQuery, TResponse>
     where TQuery : IQuery<TResponse>
 {
-    private readonly IQueryHandler<TQuery, TResponse> _inner;
-    private readonly IEnumerable<IValidator<TQuery>> _validators;
-    private readonly ILogger<ValidationQueryHandler<TQuery, TResponse>> _logger;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ValidationQueryHandler{TQuery, TResponse}"/> class.
-    /// </summary>
-    /// <param name="inner">The inner query handler to decorate.</param>
-    /// <param name="validators">The validators for the query.</param>
-    /// <param name="logger">The logger instance.</param>
-    public ValidationQueryHandler(
-        IQueryHandler<TQuery, TResponse> inner,
-        IEnumerable<IValidator<TQuery>> validators,
-        ILogger<ValidationQueryHandler<TQuery, TResponse>> logger)
-    {
-        _inner = inner;
-        _validators = validators;
-        _logger = logger;
-    }
-
     /// <inheritdoc />
     public async Task<TResponse> Handle(TQuery query, CancellationToken cancellationToken)
     {
-        if (!_validators.Any())
+        if (!validators.Any())
         {
-            return await _inner.Handle(query, cancellationToken).ConfigureAwait(false);
+            return await inner.Handle(query, cancellationToken).ConfigureAwait(false);
         }
 
         var failures = new List<ValidationFailure>();
 
-        foreach (var validator in _validators)
+        foreach (var validator in validators)
         {
             var results = await validator.ValidateAsync(query, cancellationToken).ConfigureAwait(false);
 
@@ -63,11 +53,11 @@ public sealed class ValidationQueryHandler<TQuery, TResponse> : IQueryHandler<TQ
 
         if (failures is not { Count: > 0 })
         {
-            return await _inner.Handle(query, cancellationToken).ConfigureAwait(false);
+            return await inner.Handle(query, cancellationToken).ConfigureAwait(false);
         }
 
         var queryName = typeof(TQuery).Name;
-        Log.ValidationFailed(_logger, queryName, failures.Count);
+        Log.ValidationFailed(logger, queryName, failures.Count);
 
         throw new ValidationException(failures);
 
