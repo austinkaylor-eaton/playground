@@ -1,4 +1,4 @@
-﻿namespace Core.Validation;
+﻿namespace Core.CQRS.Validation;
 
 /// <summary>
 /// Represents a single validation failure for a property.

@@ -1,4 +1,4 @@
-﻿namespace Core.Validation;
+﻿namespace Core.CQRS.Validation;
 
 /// <summary>
 /// Defines a validator for instances of type <typeparamref name="T"/>.

@@ -1,4 +1,4 @@
-﻿using Core.Validation;
+﻿using Core.CQRS.Validation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.CQRS.Decorators;

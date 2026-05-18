@@ -2,7 +2,7 @@
 using Core.CQRS.Decorators.Timeout;
 using Core.CQRS.Decorators.Tracing;
 using Core.CQRS.Decorators.Validation;
-using Core.Validation;
+using Core.CQRS.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

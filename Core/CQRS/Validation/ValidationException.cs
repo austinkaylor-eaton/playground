@@ -1,4 +1,4 @@
-﻿namespace Core.Validation;
+﻿namespace Core.CQRS.Validation;
 
 /// <summary>
 /// Exception thrown when one or more validation failures occur in the CQRS pipeline.

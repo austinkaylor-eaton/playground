@@ -1,4 +1,4 @@
-﻿using Core.Validation;
+﻿using Core.CQRS.Validation;
 using Microsoft.Extensions.Logging;
 
 namespace Core.CQRS.Decorators.Validation;
