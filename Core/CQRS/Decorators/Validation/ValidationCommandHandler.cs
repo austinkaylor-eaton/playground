@@ -18,41 +18,31 @@ namespace Core.CQRS.Decorators.Validation;
 /// </code>
 /// </example>
 /// <seealso cref="ICommandHandler{TCommand, TResponse}"/>
-public sealed class ValidationCommandHandler<TCommand, TResponse>
+/// <remarks>
+/// Initializes a new instance of the <see cref="ValidationCommandHandler{TCommand, TResponse}"/> class.
+/// </remarks>
+/// <param name="inner">The inner command handler to decorate.</param>
+/// <param name="validators">The validators for the command.</param>
+/// <param name="logger">The logger instance.</param>
+public sealed class ValidationCommandHandler<TCommand, TResponse>(
+    ICommandHandler<TCommand, TResponse> inner,
+    IEnumerable<IValidator<TCommand>> validators,
+    ILogger<ValidationCommandHandler<TCommand, TResponse>> logger)
     : ICommandHandler<TCommand, TResponse>
     where TCommand : ICommand<TResponse>
 {
-    private readonly ICommandHandler<TCommand, TResponse> _inner;
-    private readonly IEnumerable<IValidator<TCommand>> _validators;
-    private readonly ILogger<ValidationCommandHandler<TCommand, TResponse>> _logger;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ValidationCommandHandler{TCommand, TResponse}"/> class.
-    /// </summary>
-    /// <param name="inner">The inner command handler to decorate.</param>
-    /// <param name="validators">The validators for the command.</param>
-    /// <param name="logger">The logger instance.</param>
-    public ValidationCommandHandler(
-        ICommandHandler<TCommand, TResponse> inner,
-        IEnumerable<IValidator<TCommand>> validators,
-        ILogger<ValidationCommandHandler<TCommand, TResponse>> logger)
-    {
-        _inner = inner;
-        _validators = validators;
-        _logger = logger;
-    }
 
     /// <inheritdoc />
     public async Task<TResponse> Handle(TCommand command, CancellationToken cancellationToken)
     {
-        if (!_validators.Any())
+        if (!validators.Any())
         {
-            return await _inner.Handle(command, cancellationToken).ConfigureAwait(false);
+            return await inner.Handle(command, cancellationToken).ConfigureAwait(false);
         }
 
         var failures = new List<ValidationFailure>();
 
-        foreach (var validator in _validators)
+        foreach (var validator in validators)
         {
             var results = await validator.ValidateAsync(command, cancellationToken).ConfigureAwait(false);
 
@@ -64,11 +54,11 @@ public sealed class ValidationCommandHandler<TCommand, TResponse>
 
         if (failures is not { Count: > 0 })
         {
-            return await _inner.Handle(command, cancellationToken).ConfigureAwait(false);
+            return await inner.Handle(command, cancellationToken).ConfigureAwait(false);
         }
 
         var commandName = typeof(TCommand).Name;
-        Log.ValidationFailed(_logger, commandName, failures.Count);
+        Log.ValidationFailed(logger, commandName, failures.Count);
 
         throw new ValidationException(failures);
 

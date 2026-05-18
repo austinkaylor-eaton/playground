@@ -11,27 +11,18 @@ namespace Core.CQRS.Decorators.Logging;
 /// <typeparam name="TCommand">The type of command being handled.</typeparam>
 /// <typeparam name="TResponse">The type of the command result.</typeparam>
 /// <seealso cref="ICommandHandler{TCommand, TResponse}"/>
-public sealed class LoggingCommandHandler<TCommand, TResponse>
+/// <remarks>
+/// Initializes a new instance of the
+/// <see cref="LoggingCommandHandler{TCommand, TResponse}"/> class.
+/// </remarks>
+/// <param name="inner">The inner command handler to decorate.</param>
+/// <param name="logger">The logger instance.</param>
+public sealed class LoggingCommandHandler<TCommand, TResponse>(
+    ICommandHandler<TCommand, TResponse> inner,
+    ILogger<LoggingCommandHandler<TCommand, TResponse>> logger)
     : ICommandHandler<TCommand, TResponse>
     where TCommand : ICommand<TResponse>
 {
-    private readonly ICommandHandler<TCommand, TResponse> _inner;
-    private readonly ILogger<LoggingCommandHandler<TCommand, TResponse>> _logger;
-
-    /// <summary>
-    /// Initializes a new instance of the
-    /// <see cref="LoggingCommandHandler{TCommand, TResponse}"/> class.
-    /// </summary>
-    /// <param name="inner">The inner command handler to decorate.</param>
-    /// <param name="logger">The logger instance.</param>
-    public LoggingCommandHandler(
-        ICommandHandler<TCommand, TResponse> inner,
-        ILogger<LoggingCommandHandler<TCommand, TResponse>> logger)
-    {
-        _inner = inner;
-        _logger = logger;
-    }
-
     /// <inheritdoc />
     [SuppressMessage("Design", "S2139",
         Justification = "Decorator intentionally logs and rethrows to preserve the call stack")]
@@ -39,22 +30,22 @@ public sealed class LoggingCommandHandler<TCommand, TResponse>
     {
         var commandName = typeof(TCommand).Name;
 
-        Log.HandlingCommand(_logger, commandName);
+        Log.HandlingCommand(logger, commandName);
         var startTime = Stopwatch.GetTimestamp();
 
         try
         {
-            var result = await _inner.Handle(command, cancellationToken).ConfigureAwait(false);
+            var result = await inner.Handle(command, cancellationToken).ConfigureAwait(false);
 
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            Log.HandledCommand(_logger, commandName, elapsed.TotalMilliseconds);
+            Log.HandledCommand(logger, commandName, elapsed.TotalMilliseconds);
 
             return result;
         }
         catch (Exception ex)
         {
             var elapsed = Stopwatch.GetElapsedTime(startTime);
-            Log.CommandFailed(_logger, ex, commandName, elapsed.TotalMilliseconds);
+            Log.CommandFailed(logger, ex, commandName, elapsed.TotalMilliseconds);
 
             throw;
         }

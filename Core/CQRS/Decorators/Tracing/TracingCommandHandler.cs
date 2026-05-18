@@ -22,7 +22,8 @@ namespace Core.CQRS.Decorators.Tracing;
 /// </remarks>
 /// <param name="inner">The inner command handler to decorate.</param>
 public sealed class TracingCommandHandler<TCommand, TResponse>(ICommandHandler<TCommand, TResponse> inner)
-    : ICommandHandler<TCommand, TResponse> where TCommand : ICommand<TResponse>
+    : ICommandHandler<TCommand, TResponse>
+    where TCommand : ICommand<TResponse>
 {
     /// <inheritdoc />
     public async Task<TResponse> Handle(TCommand command, CancellationToken cancellationToken)
