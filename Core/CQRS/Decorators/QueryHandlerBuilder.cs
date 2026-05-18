@@ -1,4 +1,5 @@
 ﻿using Core.CQRS.Decorators.Logging;
+using Core.CQRS.Decorators.Metrics;
 using Core.CQRS.Decorators.Timeout;
 using Core.CQRS.Decorators.Tracing;
 using Core.CQRS.Decorators.Validation;
@@ -81,6 +82,19 @@ public sealed class QueryHandlerBuilder<TQuery, TResponse, THandler>
     {
         _decoratorFactories.Add((_, inner) =>
             new TracingQueryHandler<TQuery, TResponse>(inner));
+
+        return this;
+    }
+
+    /// <summary>
+    /// Adds the metrics decorator to the query handler chain.
+    /// Records execution counts, durations, and failure rates via <see cref="CqrsMetrics"/> instruments.
+    /// </summary>
+    /// <returns>The builder instance for method chaining.</returns>
+    public QueryHandlerBuilder<TQuery, TResponse, THandler> WithMetrics()
+    {
+        _decoratorFactories.Add((_, inner) =>
+            new MetricsQueryHandler<TQuery, TResponse>(inner));
 
         return this;
     }
