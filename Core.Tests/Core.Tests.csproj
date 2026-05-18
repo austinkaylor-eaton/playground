@@ -15,4 +15,8 @@
     <PackageReference Include="TUnit"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
 </Project>
