@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using Microsoft.Extensions.Options;
@@ -9,7 +10,8 @@ namespace BookStoreApi.Models.Options;
 /// Validates the <see cref="BookStoreDatabaseOptions"/> to ensure that the configuration values are correct and meet the required criteria.
 /// </summary>
 /// <param name="config">The configuration instance used to validate the options.</param>
-internal sealed class ValidateBookStoreDatabaseOptions(IConfiguration config)
+[SuppressMessage("Design","CA1062:Validate arguments of public methods", Justification = "The configuration is provided by the framework and is expected to be non-null.")]
+public sealed class ValidateBookStoreDatabaseOptions(IConfiguration config)
     : IValidateOptions<BookStoreDatabaseOptions>
 {
     /// <summary>

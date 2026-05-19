@@ -22,5 +22,8 @@
     <PackageVersion Include="MongoDB.Driver" Version="3.8.1" />
     <PackageVersion Include="SharpCompress" Version="0.48.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+    <PackageVersion Include="TUnit" Version="1.45.0" />
   </ItemGroup>
 </Project>
