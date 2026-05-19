@@ -7,6 +7,7 @@ A place for trying out new ideas
 |----------------------------------------------|-------------------------------------------------------------------------------------------------|
 | [BookStoreApi](BookStoreApi/README.md)       | A RESTful Web API for managing books, built with ASP.NET Core 10 and MongoDB                    |
 | [TodoApi](TodoApi/README.md)                 | A RESTful Web API for managing todo items, built with ASP.NET Core 10 and Entity Framework Core |
+| [Core](Core/README.md)                       | A shared domain library providing entity abstractions, CQRS pipeline, and Result pattern        |
 | [TodoApi.Minimal](TodoApi.Minimal/README.md) | A minimal web API built with ASP.NET Core 10 and the Minimal API approach                       |
 
 ## Articles
